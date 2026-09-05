@@ -51,7 +51,7 @@ import androidx.compose.ui.res.stringResource
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun BandSlidersSection(
     bandLevels: List<Int>,
