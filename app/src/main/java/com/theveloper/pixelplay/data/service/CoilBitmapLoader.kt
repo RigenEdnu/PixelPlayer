@@ -22,9 +22,9 @@ import kotlinx.coroutines.launch
 class CoilBitmapLoader(private val context: Context, private val scope: CoroutineScope) : BitmapLoader {
 
     companion object {
-        // Large enough for lock screen / media surfaces, but bounded so we never hand
+        // Large enough for lock screen / media surfaces (Retina quality), but bounded so we never hand
         // unbounded original artwork to MediaSession/SystemUI IPC.
-        private const val MAX_NOTIFICATION_ARTWORK_SIZE_PX = 1024
+        private const val MAX_NOTIFICATION_ARTWORK_SIZE_PX = 768
     }
 
     override fun loadBitmap(uri: Uri): ListenableFuture<Bitmap> {
@@ -32,7 +32,15 @@ class CoilBitmapLoader(private val context: Context, private val scope: Coroutin
     }
 
     override fun decodeBitmap(data: ByteArray): ListenableFuture<Bitmap> {
-        return loadBitmapInternal(data)
+        // Pre-sanitize raw embedded ByteArray to prevent high-res uncompressed memory spikes
+        val sanitizedBytes = com.theveloper.pixelplay.utils.ArtworkTransportSanitizer.sanitizeEncodedBytes(
+            data = data,
+            config = com.theveloper.pixelplay.utils.ArtworkTransportSanitizer.WEAR_CONFIG.copy(
+                maxDimensionPx = MAX_NOTIFICATION_ARTWORK_SIZE_PX,
+                maxBytes = 350 * 1024
+            )
+        ) ?: data
+        return loadBitmapInternal(sanitizedBytes)
     }
 
     private fun loadBitmapInternal(data: Any): ListenableFuture<Bitmap> {
