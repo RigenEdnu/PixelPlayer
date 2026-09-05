@@ -509,6 +509,41 @@ class EqualizerViewModel @Inject constructor(
         }
     }
     
+    fun importEqualizerPreset(uri: android.net.Uri, onSuccess: (String) -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            val result = EqualizerImportParser.parsePresetFromUri(context.contentResolver, uri)
+            result.onSuccess { preset ->
+                // Ensure unique name if duplicates exist
+                val customList = _uiState.value.customPresets
+                var finalName = preset.displayName
+                var counter = 1
+                while (customList.any { it.name.equals(finalName, ignoreCase = true) } || EqualizerPreset.ALL_PRESETS.any { it.name.equals(finalName, ignoreCase = true) }) {
+                    finalName = "${preset.displayName} ($counter)"
+                    counter++
+                }
+
+                val finalPreset = preset.copy(name = finalName, displayName = finalName)
+                
+                // Save custom preset
+                equalizerPreferencesRepository.saveCustomPreset(finalPreset)
+                
+                // Auto pin if not pinned
+                val currentPinned = _uiState.value.pinnedPresetsNames.toMutableList()
+                if (!currentPinned.contains(finalName)) {
+                    currentPinned.add(finalName)
+                    equalizerPreferencesRepository.setPinnedPresets(currentPinned)
+                }
+
+                // Apply preset immediately
+                selectPreset(finalPreset)
+                onSuccess(finalName)
+            }.onFailure { error ->
+                Timber.tag(TAG).e(error, "Failed to import equalizer preset")
+                onError(error.message ?: "Failed to import equalizer file")
+            }
+        }
+    }
+
     override fun onCleared() {
         persistBandLevelsJob?.cancel()
         persistBassBoostJob?.cancel()

@@ -39,7 +39,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
+import androidx.compose.material.icons.rounded.FileDownload
+import androidx.compose.material.icons.rounded.FolderOpen
 import androidx.compose.material.icons.rounded.PowerSettingsNew
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -225,6 +231,25 @@ fun EqualizerScreen(
     
     val density = LocalDensity.current
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val importSuccessFormat = stringResource(R.string.equalizer_import_success)
+    val importErrorFormat = stringResource(R.string.equalizer_import_error)
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            equalizerViewModel.importEqualizerPreset(
+                uri = uri,
+                onSuccess = { name ->
+                    Toast.makeText(context, String.format(importSuccessFormat, name), Toast.LENGTH_SHORT).show()
+                },
+                onError = { err ->
+                    Toast.makeText(context, String.format(importErrorFormat, err), Toast.LENGTH_LONG).show()
+                }
+            )
+        }
+    }
     val lazyListState = rememberLazyListState()
     
     val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -382,6 +407,22 @@ fun EqualizerScreen(
             expandedTitleStartPadding = 20.dp,
             collapsedTitleStartPadding = 72.dp,
             actions = {
+                // Import EQ Button
+                FilledIconButton(
+                    onClick = { importLauncher.launch("*/*") },
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.FolderOpen,
+                        contentDescription = stringResource(R.string.equalizer_import_preset_cd)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
                 // View Mode Toggle
                 FilledIconButton(
                     onClick = { equalizerViewModel.cycleViewMode() },

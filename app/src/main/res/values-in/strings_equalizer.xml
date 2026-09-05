@@ -54,4 +54,8 @@
     <string name="equalizer_cd_reset_presets_default">Reset ke default</string>
     <string name="equalizer_cd_visible">Terlihat</string>
     <string name="equalizer_cd_hidden">Tersembunyi</string>
+    <!-- Equalizer import -->
+    <string name="equalizer_import_preset_cd">Impor preset equalizer</string>
+    <string name="equalizer_import_success">Berhasil mengimpor preset: %1$s</string>
+    <string name="equalizer_import_error">Gagal mengimpor preset: %1$s</string>
 </resources>
