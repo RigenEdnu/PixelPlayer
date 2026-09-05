@@ -1456,6 +1456,8 @@ class DualPlayerEngine @Inject constructor(
         playerB?.pause()
         playerB?.stop()
         playerB?.clearMediaItems()
+        playerB?.release()
+        playerB = null
 
         setPauseAtEndOfMediaItems(false)
     }

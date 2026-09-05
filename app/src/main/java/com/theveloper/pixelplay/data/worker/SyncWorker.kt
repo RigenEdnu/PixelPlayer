@@ -58,6 +58,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 import timber.log.Timber
 
 enum class SyncMode {
@@ -405,6 +406,7 @@ constructor(
                                         )
                                     }
                             totalScannedCount += idBatch.size
+                            yield()
                             Log.d(
                                     TAG,
                                     "LRC Scan: Processed batch of ${idBatch.size}, total assigned so far: $batchScannedCount"
@@ -1046,6 +1048,8 @@ constructor(
                 }.awaitAll()
             }
             songs.addAll(batchResults)
+            // Cooperative pause between batches to prevent CPU starvation and keep UI responsive
+            yield()
         }
 
         Trace.endSection()
