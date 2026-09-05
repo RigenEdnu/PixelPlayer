@@ -49,6 +49,7 @@ data class EqualizerUiState(
     val isLoudnessDismissed: Boolean = false,
     val customPresets: List<EqualizerPreset> = emptyList(), // Added
     val pinnedPresetsNames: List<String> = emptyList(), // Added
+    val isAutoEqEnabled: Boolean = false,
 ) {
     // Computed property for accessible presets (Pinned)
     val accessiblePresets: List<EqualizerPreset>
@@ -194,7 +195,8 @@ class EqualizerViewModel @Inject constructor(
                 equalizerPreferencesRepository.loudnessDismissedFlow,
                 equalizerPreferencesRepository.equalizerViewModeFlow,
                 equalizerPreferencesRepository.customPresetsFlow, // Added
-                equalizerPreferencesRepository.pinnedPresetsFlow // Added
+                equalizerPreferencesRepository.pinnedPresetsFlow, // Added
+                equalizerPreferencesRepository.autoEqEnabledFlow
             ) { values -> // Too many args for standard destructuring, use array/list access
                  val enabled = values[0] as Boolean
                  val presetName = values[1] as String
@@ -213,6 +215,7 @@ class EqualizerViewModel @Inject constructor(
                  val viewMode = values[12] as EqualizerViewMode
                  val customPresets = (values[13] as? List<*>)?.filterIsInstance<EqualizerPreset>() ?: emptyList()
                  val pinnedPresets = (values[14] as? List<*>)?.filterIsInstance<String>() ?: emptyList()
+                 val autoEqEnabled = values[15] as Boolean
 
                 val currentPreset = if (presetName == "custom") {
                     EqualizerPreset.custom(customBands)
@@ -240,6 +243,7 @@ class EqualizerViewModel @Inject constructor(
                     // New State
                     customPresets = customPresets,
                     pinnedPresetsNames = pinnedPresets,
+                    isAutoEqEnabled = autoEqEnabled,
                     // Capabilities (Keep existing values)
                     isBassBoostSupported = _uiState.value.isBassBoostSupported,
                     isVirtualizerSupported = _uiState.value.isVirtualizerSupported,
@@ -293,6 +297,12 @@ class EqualizerViewModel @Inject constructor(
             if (!preset.isCustom) {
                 equalizerPreferencesRepository.setEqualizerCustomBands(preset.bandLevels)
             }
+        }
+    }
+
+    fun setAutoEqEnabled(enabled: Boolean) {
+        viewModelScope.launch {
+            equalizerPreferencesRepository.setAutoEqEnabled(enabled)
         }
     }
     

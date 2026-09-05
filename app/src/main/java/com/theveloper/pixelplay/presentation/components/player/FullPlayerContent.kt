@@ -1,6 +1,9 @@
 package com.theveloper.pixelplay.presentation.components.player
 
 import android.annotation.SuppressLint
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.theveloper.pixelplay.presentation.viewmodel.EqualizerViewModel
+import androidx.compose.material.icons.rounded.GraphicEq
 import android.content.Context
 import android.content.res.Configuration
 import android.net.Uri
@@ -241,6 +244,9 @@ fun FullPlayerContent(
     var showSongInfoBottomSheet by remember { mutableStateOf(false) }
     var showLyricsSheet by remember { mutableStateOf(false) }
     var showArtistPicker by rememberSaveable { mutableStateOf(false) }
+    var showAutoEqSheet by remember { mutableStateOf(false) }
+    val equalizerViewModel: EqualizerViewModel = hiltViewModel()
+    val equalizerUiState by equalizerViewModel.uiState.collectAsStateWithLifecycle()
     
     val lyricsSearchUiState by playerViewModel.lyricsSearchUiState.collectAsStateWithLifecycle()
 
@@ -996,6 +1002,21 @@ fun FullPlayerContent(
             }
         )
     }
+
+    if (showAutoEqSheet) {
+        AutoEqBottomSheet(
+            currentSong = song,
+            isAutoEqEnabled = equalizerUiState.isAutoEqEnabled,
+            currentPresetName = equalizerUiState.currentPreset.name,
+            onToggleAutoEq = { equalizerViewModel.setAutoEqEnabled(it) },
+            onSelectPreset = { equalizerViewModel.selectPreset(it) },
+            onOpenFullEqualizer = {
+                // Trigger navigation to full EqualizerScreen
+                onCollapse()
+            },
+            onDismiss = { showAutoEqSheet = false }
+        )
+    }
 }
 
 
@@ -1365,6 +1386,7 @@ private fun FullPlayerSongMetadataSection(
             showQueueButton = isLandscape,
             onClickQueue = onQueueClick,
             onClickArtist = onArtistClick,
+            onClickAutoEq = { showAutoEqSheet = true },
             isPlayingProvider = isPlayingProvider
         )
     }
@@ -1464,6 +1486,7 @@ private fun SongMetadataDisplaySection(
     showQueueButton: Boolean,
     onClickQueue: () -> Unit,
     onClickArtist: () -> Unit,
+    onClickAutoEq: () -> Unit,
     modifier: Modifier = Modifier,
     isPlayingProvider: () -> Boolean = { true }
 ) {
@@ -1590,20 +1613,40 @@ private fun SongMetadataDisplaySection(
                 }
             }
         } else {
-            // Portrait Mode: Just the Lyrics button (Queue is in TopBar)
-            FilledIconButton(
-                modifier = Modifier
-                    .size(width = 48.dp, height = 48.dp),
-                colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = chipColor,
-                    contentColor = chipContentColor
-                ),
-                onClick = onClickLyrics,
+            // Portrait Mode: Actions (EQ and Lyrics)
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.rounded_lyrics_24),
-                    contentDescription = stringResource(R.string.common_lyrics)
-                )
+                FilledIconButton(
+                    modifier = Modifier
+                        .size(width = 44.dp, height = 44.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = chipColor,
+                        contentColor = chipContentColor
+                    ),
+                    onClick = onClickAutoEq,
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.GraphicEq,
+                        contentDescription = "Auto-EQ"
+                    )
+                }
+
+                FilledIconButton(
+                    modifier = Modifier
+                        .size(width = 44.dp, height = 44.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = chipColor,
+                        contentColor = chipContentColor
+                    ),
+                    onClick = onClickLyrics,
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.rounded_lyrics_24),
+                        contentDescription = stringResource(R.string.common_lyrics)
+                    )
+                }
             }
         }
     }

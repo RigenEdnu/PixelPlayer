@@ -63,6 +63,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -491,6 +492,30 @@ class MusicService : MediaLibraryService() {
             engine.activeAudioSessionId.collect { newSessionId ->
                 if (newSessionId != 0) {
                     equalizerManager.attachToAudioSessionIfNeeded(newSessionId)
+                }
+            }
+        }
+
+        // Auto-EQ: Listen for media item changes and automatically match genre preset if enabled
+        serviceScope.launch {
+            combine(
+                engine.activeMediaItem,
+                equalizerPreferencesRepository.autoEqEnabledFlow
+            ) { mediaItem, autoEqEnabled ->
+                mediaItem to autoEqEnabled
+            }.collect { (mediaItem, autoEqEnabled) ->
+                if (autoEqEnabled && mediaItem != null && !mediaItem.mediaId.isNullOrBlank()) {
+                    val song = withContext(Dispatchers.IO) {
+                        musicRepository.getSong(mediaItem.mediaId).first()
+                    }
+                    if (song != null) {
+                        val matchedPreset = com.theveloper.pixelplay.data.equalizer.AutoEqGenreMatcher.matchGenreToPreset(song.genre)
+                        equalizerManager.applyPreset(matchedPreset)
+                        equalizerPreferencesRepository.setEqualizerPreset(matchedPreset.name)
+                        if (!matchedPreset.isCustom) {
+                            equalizerPreferencesRepository.setEqualizerCustomBands(matchedPreset.bandLevels)
+                        }
+                    }
                 }
             }
         }

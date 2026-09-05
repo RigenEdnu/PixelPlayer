@@ -37,6 +37,7 @@ class EqualizerPreferencesRepository @Inject constructor(
         val VIEW_MODE = stringPreferencesKey("equalizer_view_mode")
         val CUSTOM_PRESETS = stringPreferencesKey("custom_presets_json")
         val PINNED_PRESETS = stringPreferencesKey("pinned_presets_json")
+        val AUTO_EQ_ENABLED = booleanPreferencesKey("auto_eq_enabled")
     }
 
     val equalizerViewModeFlow: Flow<EqualizerViewMode> = dataStore.data.map { preferences ->
@@ -140,6 +141,15 @@ class EqualizerPreferencesRepository @Inject constructor(
             EqualizerPreset.ALL_PRESETS.map { it.name }
         }
     }
+
+    val autoEqEnabledFlow: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[Keys.AUTO_EQ_ENABLED] ?: false
+    }
+
+    suspend fun setAutoEqEnabled(enabled: Boolean) =
+        dataStore.edit { preferences ->
+            preferences[Keys.AUTO_EQ_ENABLED] = enabled
+        }
 
     suspend fun setEqualizerViewMode(mode: EqualizerViewMode) =
         dataStore.edit { preferences ->
