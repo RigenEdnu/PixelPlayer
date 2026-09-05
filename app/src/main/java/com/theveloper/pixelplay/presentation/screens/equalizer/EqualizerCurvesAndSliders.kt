@@ -53,7 +53,7 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-internal fun BandSlidersSection(
+fun BandSlidersSection(
     bandLevels: List<Int>,
     isEnabled: Boolean,
     currentPreset: EqualizerPreset,

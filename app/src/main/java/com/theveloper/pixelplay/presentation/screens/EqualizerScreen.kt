@@ -571,55 +571,6 @@ private fun PresetTabsRow(
     }
 }
 
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun IndividualEffectRow(
-    title: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    isEnabled: Boolean,
-    strength: Int,
-    onEnabledChange: (Boolean) -> Unit,
-    onStrengthChange: (Int) -> Unit,
-    maxStrength: Int = 1000
-) {
-    Column {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = if (isEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(24.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
-            Switch(
-                checked = isEnabled,
-                onCheckedChange = onEnabledChange,
-                thumbContent = if (isEnabled) {
-                    {
-                        Icon(
-                            imageVector = androidx.compose.material.icons.Icons.Rounded.Check,
-                            contentDescription = null,
-                            modifier = Modifier.size(SwitchDefaults.IconSize),
-                        )
-                    }
-                } else null
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun VolumeControlCard(
