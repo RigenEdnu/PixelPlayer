@@ -16,7 +16,7 @@ internal fun PlayerEqualizerNavigationEffect(
 ) {
     LaunchedEffect(playerViewModel) {
         playerViewModel.equalizerNavigationRequests.collectLatest {
-            sheetMotionController.snapTo(sheetCollapsedTargetY)
+            sheetMotionController.snapCollapsed(sheetCollapsedTargetY)
             navController.navigate(Screen.Equalizer.route) {
                 launchSingleTop = true
             }
