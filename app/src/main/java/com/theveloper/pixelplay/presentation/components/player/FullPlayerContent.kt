@@ -1011,11 +1011,12 @@ fun FullPlayerContent(
             currentSong = song,
             isAutoEqEnabled = equalizerUiState.isAutoEqEnabled,
             currentPresetName = equalizerUiState.currentPreset.name,
+            availablePresets = equalizerUiState.allAvailablePresets,
             onToggleAutoEq = { equalizerViewModel.setAutoEqEnabled(it) },
             onSelectPreset = { equalizerViewModel.selectPreset(it) },
             onOpenFullEqualizer = {
-                // Trigger navigation to full EqualizerScreen
-                onCollapse()
+                // Collapse player and trigger navigation to full EqualizerScreen
+                playerViewModel.triggerEqualizerNavigationFromPlayer()
             },
             onDismiss = { showAutoEqSheet = false }
         )

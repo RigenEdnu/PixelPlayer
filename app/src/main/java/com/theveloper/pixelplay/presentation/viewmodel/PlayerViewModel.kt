@@ -663,6 +663,8 @@ class PlayerViewModel @Inject constructor(
     val albumNavigationRequests = _albumNavigationRequests.asSharedFlow()
     private val _artistNavigationRequests = MutableSharedFlow<Long>(extraBufferCapacity = 1)
     val artistNavigationRequests = _artistNavigationRequests.asSharedFlow()
+    private val _equalizerNavigationRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val equalizerNavigationRequests = _equalizerNavigationRequests.asSharedFlow()
     private val _searchNavDoubleTapEvents = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val searchNavDoubleTapEvents = _searchNavDoubleTapEvents.asSharedFlow()
     
@@ -2189,6 +2191,17 @@ class PlayerViewModel @Inject constructor(
             }
 
             _artistNavigationRequests.emit(artistId)
+        }
+    }
+
+    fun triggerEqualizerNavigationFromPlayer() {
+        collapsePlayerSheet()
+        viewModelScope.launch {
+            withTimeoutOrNull(900) {
+                awaitSheetState(PlayerSheetState.COLLAPSED)
+                awaitPlayerCollapse()
+            }
+            _equalizerNavigationRequests.emit(Unit)
         }
     }
 

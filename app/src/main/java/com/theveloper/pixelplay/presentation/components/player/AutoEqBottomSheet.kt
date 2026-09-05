@@ -44,6 +44,7 @@ fun AutoEqBottomSheet(
     currentSong: Song?,
     isAutoEqEnabled: Boolean,
     currentPresetName: String,
+    availablePresets: List<EqualizerPreset> = EqualizerPreset.ALL_PRESETS,
     onToggleAutoEq: (Boolean) -> Unit,
     onSelectPreset: (EqualizerPreset) -> Unit,
     onOpenFullEqualizer: () -> Unit,
@@ -157,7 +158,7 @@ fun AutoEqBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(EqualizerPreset.ALL_PRESETS, key = { it.name }) { preset ->
+                items(availablePresets, key = { it.name }) { preset ->
                     val isSelected = currentPresetName.equals(preset.name, ignoreCase = true)
                     FilterChip(
                         selected = isSelected,
