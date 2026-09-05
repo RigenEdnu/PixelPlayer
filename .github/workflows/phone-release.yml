@@ -54,6 +54,15 @@ jobs:
       - name: Build Phone release APK
         run: gradle :app:assembleRelease -Ppixelplay.enableAbiSplits=true --stacktrace --info
 
+      - name: Upload Compilation Logs on Failure
+        if: failure()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: compilation-failure-reports
+          path: |
+            app/build/reports/
+            build/reports/problems/
+
       - name: Verify Phone split APKs
         run: |
           BUILD_TOOLS_VERSION="$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
