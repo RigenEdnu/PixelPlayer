@@ -59,8 +59,8 @@ jobs:
       - name: Build Release APKs (Universal + ABI Splits)
         if: github.event.inputs.build_type == 'release' || startsWith(github.ref, 'refs/tags/v')
         run: |
-          ./gradlew :app:assembleRelease -Ppixelplay.enableAbiSplits=false
-          ./gradlew :app:assembleRelease -Ppixelplay.enableAbiSplits=true
+          ./gradlew :app:assembleRelease -Ppixelplay.enableAbiSplits=false --stacktrace --info
+          ./gradlew :app:assembleRelease -Ppixelplay.enableAbiSplits=true --stacktrace --info
 
       - name: Verify APK Signatures
         run: |
