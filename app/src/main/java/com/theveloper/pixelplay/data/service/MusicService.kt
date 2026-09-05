@@ -497,28 +497,6 @@ class MusicService : MediaLibraryService() {
         }
 
         // Auto-EQ: Listen for media item changes and automatically match genre preset if enabled
-        serviceScope.launch {
-            combine(
-                engine.activeMediaItem,
-                equalizerPreferencesRepository.autoEqEnabledFlow
-            ) { mediaItem, autoEqEnabled ->
-                mediaItem to autoEqEnabled
-            }.collect { (mediaItem, autoEqEnabled) ->
-                if (autoEqEnabled && mediaItem != null && !mediaItem.mediaId.isNullOrBlank()) {
-                    val song = withContext(Dispatchers.IO) {
-                        musicRepository.getSong(mediaItem.mediaId).first()
-                    }
-                    if (song != null) {
-                        val matchedPreset = com.theveloper.pixelplay.data.equalizer.AutoEqGenreMatcher.matchGenreToPreset(song.genre)
-                        equalizerManager.applyPreset(matchedPreset)
-                        equalizerPreferencesRepository.setEqualizerPreset(matchedPreset.name)
-                        if (!matchedPreset.isCustom) {
-                            equalizerPreferencesRepository.setEqualizerCustomBands(matchedPreset.bandLevels)
-                        }
-                    }
-                }
-            }
-        }
 
         serviceScope.launch {
             userPreferencesRepository.keepPlayingInBackgroundFlow.collect { enabled ->
@@ -1446,6 +1424,27 @@ class MusicService : MediaLibraryService() {
             val nextIndex = player.nextMediaItemIndex
             if (nextIndex != androidx.media3.common.C.INDEX_UNSET) {
                 runCatching { replayGainProcessor.prefetch(player.getMediaItemAt(nextIndex)) }
+            }
+
+            // Auto-EQ: Match genre preset automatically when song transitions if Auto-EQ is enabled
+            val songId = mediaItem?.mediaId
+            if (!songId.isNullOrBlank()) {
+                serviceScope.launch {
+                    val autoEqEnabled = equalizerPreferencesRepository.autoEqEnabledFlow.first()
+                    if (autoEqEnabled) {
+                        val song = withContext(Dispatchers.IO) {
+                            musicRepository.getSong(songId).first()
+                        }
+                        if (song != null) {
+                            val matchedPreset = com.theveloper.pixelplay.data.equalizer.AutoEqGenreMatcher.matchGenreToPreset(song.genre)
+                            equalizerManager.applyPreset(matchedPreset)
+                            equalizerPreferencesRepository.setEqualizerPreset(matchedPreset.name)
+                            if (!matchedPreset.isCustom) {
+                                equalizerPreferencesRepository.setEqualizerCustomBands(matchedPreset.bandLevels)
+                            }
+                        }
+                    }
+                }
             }
             // Optimization: Don't force-update widgets on every rapid skip.
             // Let the debounced updater handle it to prevent UI freezes.

@@ -1,6 +1,7 @@
 package com.theveloper.pixelplay.presentation.components.player
 
 import android.annotation.SuppressLint
+import androidx.compose.material.icons.Icons
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.theveloper.pixelplay.presentation.viewmodel.EqualizerViewModel
 import androidx.compose.material.icons.rounded.GraphicEq
@@ -592,6 +593,7 @@ fun FullPlayerContent(
             chipContentColor = playerAccentColor,
             onQueueClick = onSongMetadataQueueClick,
             onArtistClick = onSongMetadataArtistClick,
+            onAutoEqClick = { showAutoEqSheet = true },
             isPlayingProvider = isPlayingProvider
         )
     }
@@ -615,6 +617,7 @@ fun FullPlayerContent(
             chipContentColor = playerAccentColor,
             onQueueClick = onSongMetadataQueueClick,
             onArtistClick = onSongMetadataArtistClick,
+            onAutoEqClick = { showAutoEqSheet = true },
             isPlayingProvider = isPlayingProvider
         )
     }
@@ -1341,6 +1344,7 @@ private fun FullPlayerSongMetadataSection(
     chipContentColor: Color,
     onQueueClick: () -> Unit,
     onArtistClick: () -> Unit,
+    onAutoEqClick: () -> Unit = {},
     isPlayingProvider: () -> Boolean = { true }
 ) {
     val shouldDelay = loadingTweaks.delayAll || loadingTweaks.delaySongMetadata
@@ -1386,7 +1390,7 @@ private fun FullPlayerSongMetadataSection(
             showQueueButton = isLandscape,
             onClickQueue = onQueueClick,
             onClickArtist = onArtistClick,
-            onClickAutoEq = { showAutoEqSheet = true },
+            onClickAutoEq = onAutoEqClick,
             isPlayingProvider = isPlayingProvider
         )
     }
