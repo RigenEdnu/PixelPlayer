@@ -918,6 +918,10 @@ suspend fun markDirectoryRulesVersionApplied(version: Int) {
         dataStore.edit { it[PreferencesKeys.IS_FOLDERS_PLAYLIST_VIEW] = isPlaylistView }
     }
 
+    suspend fun setFoldersPlaylistView(isPlaylistView: Boolean) {
+        setIsFoldersPlaylistView(isPlaylistView)
+    }
+
     val hideLocalMediaFlow: Flow<Boolean> =
         pref { it[PreferencesKeys.HIDE_LOCAL_MEDIA] ?: false }.distinctUntilChanged()
 
