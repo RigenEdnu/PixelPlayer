@@ -58,6 +58,12 @@ val enableAbiSplits = providers.gradleProperty("pixelplay.enableAbiSplits")
     .getOrElse("true")
     .toBoolean()
 
+val targetAbiSplits = providers.gradleProperty("pixelplay.targetAbis")
+    .getOrElse("arm64-v8a")
+    .split(",")
+    .map { it.trim() }
+    .filter { it.isNotEmpty() }
+
 val enableComposeCompilerReports = providers.gradleProperty("pixelplay.enableComposeCompilerReports")
     .getOrElse("false")
     .toBoolean()
@@ -178,7 +184,7 @@ android {
             isEnable = enableAbiSplits
             reset()
             if (enableAbiSplits) {
-                include("arm64-v8a", "armeabi-v7a")
+                include(*targetAbiSplits.toTypedArray())
                 isUniversalApk = false
             }
         }
