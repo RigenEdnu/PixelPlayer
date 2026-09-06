@@ -59,7 +59,7 @@ val enableAbiSplits = providers.gradleProperty("pixelplay.enableAbiSplits")
     .toBoolean()
 
 val targetAbiSplits = providers.gradleProperty("pixelplay.targetAbis")
-    .getOrElse("arm64-v8a")
+    .getOrElse("arm64-v8a,armeabi-v7a")
     .split(",")
     .map { it.trim() }
     .filter { it.isNotEmpty() }
