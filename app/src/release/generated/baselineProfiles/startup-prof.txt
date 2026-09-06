@@ -28610,7 +28610,6 @@ PLcom/theveloper/pixelplay/MainActivity;->access$MainUI$lambda$32(Landroidx/comp
 PLcom/theveloper/pixelplay/MainActivity;->access$MainUI$lambda$35(Landroidx/compose/runtime/MutableState;Z)V
 SPLcom/theveloper/pixelplay/MainActivity;->access$getMainViewModel(Lcom/theveloper/pixelplay/MainActivity;)Lcom/theveloper/pixelplay/presentation/viewmodel/MainViewModel;
 PLcom/theveloper/pixelplay/MainActivity;->access$onCreate$lambda$1$11$2(Landroidx/compose/runtime/MutableState;Z)V
-PLcom/theveloper/pixelplay/MainActivity;->access$toUiModel(Lcom/theveloper/pixelplay/MainActivity;Lcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;Landroid/content/Context;)Lcom/theveloper/pixelplay/presentation/components/PlayStoreAnnouncementUiModel;
 SPLcom/theveloper/pixelplay/MainActivity;->attachBaseContext(Landroid/content/Context;)V
 SPLcom/theveloper/pixelplay/MainActivity;->getMainViewModel()Lcom/theveloper/pixelplay/presentation/viewmodel/MainViewModel;
 SPLcom/theveloper/pixelplay/MainActivity;->getPlayerViewModel()Lcom/theveloper/pixelplay/presentation/viewmodel/PlayerViewModel;
@@ -28635,7 +28634,6 @@ SPLcom/theveloper/pixelplay/MainActivity;->onResume()V
 PLcom/theveloper/pixelplay/MainActivity;->onStart$lambda$0()V
 SPLcom/theveloper/pixelplay/MainActivity;->onStart()V
 PLcom/theveloper/pixelplay/MainActivity;->onStop()V
-PLcom/theveloper/pixelplay/MainActivity;->toUiModel(Lcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;Landroid/content/Context;)Lcom/theveloper/pixelplay/presentation/components/PlayStoreAnnouncementUiModel;
 Lcom/theveloper/pixelplay/MainActivity$$ExternalSyntheticLambda0;
 SPLcom/theveloper/pixelplay/MainActivity$$ExternalSyntheticLambda0;-><init>(Landroidx/compose/runtime/State;Landroidx/compose/runtime/State;)V
 SPLcom/theveloper/pixelplay/MainActivity$$ExternalSyntheticLambda0;->invoke()Ljava/lang/Object;
@@ -30031,15 +30029,6 @@ SPLcom/theveloper/pixelplay/data/gdrive/GDriveStreamProxy;-><init>(Lcom/thevelop
 Lcom/theveloper/pixelplay/data/gdrive/GDriveStreamProxy$Companion;
 SPLcom/theveloper/pixelplay/data/gdrive/GDriveStreamProxy$Companion;-><init>()V
 SPLcom/theveloper/pixelplay/data/gdrive/GDriveStreamProxy$Companion;-><init>(Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;-><clinit>()V
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;-><init>(ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getBody()Ljava/lang/String;
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getDismissActionLabel()Ljava/lang/String;
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getEnabled()Z
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getLinkPendingMessage()Ljava/lang/String;
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getPlayStoreUrl()Ljava/lang/String;
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getPrimaryActionLabel()Ljava/lang/String;
-PLcom/theveloper/pixelplay/data/github/PlayStoreAnnouncementRemoteConfig;->getTitle()Ljava/lang/String;
 PLcom/theveloper/pixelplay/data/image/JellyfinCoilFetcher$Factory;-><clinit>()V
 PLcom/theveloper/pixelplay/data/image/JellyfinCoilFetcher$Factory;-><init>(Lcom/theveloper/pixelplay/data/jellyfin/JellyfinRepository;Lokhttp3/OkHttpClient;)V
 PLcom/theveloper/pixelplay/data/image/JellyfinCoilFetcher$Factory;->create(Landroid/net/Uri;Lcoil/request/Options;Lcoil/ImageLoader;)Lcoil/fetch/Fetcher;
