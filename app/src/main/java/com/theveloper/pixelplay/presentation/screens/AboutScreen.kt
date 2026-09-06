@@ -102,7 +102,6 @@ import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.theveloper.pixelplay.R
-import com.theveloper.pixelplay.data.github.GitHubContributorService
 import com.theveloper.pixelplay.presentation.components.CollapsibleCommonTopBar
 import com.theveloper.pixelplay.presentation.components.MiniPlayerHeight
 import com.theveloper.pixelplay.presentation.components.SmartImage
@@ -192,36 +191,8 @@ fun AboutScreen(
         "N/A"
     }
 
-    var contributors by remember { mutableStateOf<List<Contributor>>(emptyList()) }
-    var isLoadingContributors by remember { mutableStateOf(true) }
-    val githubService = remember { GitHubContributorService() }
-
-    LaunchedEffect(Unit) {
-        try {
-            val result = githubService.fetchContributors()
-            result.onSuccess { githubContributors ->
-                contributors = githubContributors
-                    .filter { normalizeHandle(it.login) != CoreMaintainer.id }
-                    .map { github ->
-                        Contributor(
-                            id = normalizeHandle(github.login),
-                            displayName = "@${github.login}",
-                            role = "Community contributor",
-                            avatarUrl = github.avatar_url,
-                            iconRes = R.drawable.rounded_person_24,
-                            githubUrl = github.html_url,
-                            contributions = github.contributions,
-                        )
-                    }
-            }
-            result.onFailure { exception ->
-                Timber.e(exception, "Failed to fetch contributors from GitHub")
-                contributors = emptyList()
-            }
-        } finally {
-            isLoadingContributors = false
-        }
-    }
+    val contributors = emptyList<Contributor>()
+    val isLoadingContributors = false
 
     val contributorsById = remember(contributors) {
         contributors.associateBy { it.id }
