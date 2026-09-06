@@ -41,10 +41,18 @@ jobs:
             "$ANDROID_HOME/build-tools/$BUILD_TOOLS_VERSION/apksigner" verify --verbose "$apk"
           done
 
-      - name: Upload Phone split APK artifacts
+      - name: Upload Phone arm64-v8a Debug APK
         uses: actions/upload-artifact@v7.0.1
         with:
-          name: PixelPlay-phone-debug-split-apks
-          path: app/build/outputs/apk/debug/app-*-debug.apk
-          if-no-files-found: error
-          compression-level: 0
+          name: PixelPlay-phone-debug-arm64-v8a
+          path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+          if-no-files-found: warn
+          compression-level: 6
+
+      - name: Upload Phone armeabi-v7a Debug APK
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: PixelPlay-phone-debug-armeabi-v7a
+          path: app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk
+          if-no-files-found: warn
+          compression-level: 6
