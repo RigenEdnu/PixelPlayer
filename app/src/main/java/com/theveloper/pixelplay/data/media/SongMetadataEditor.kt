@@ -283,10 +283,10 @@ class SongMetadataEditor(
                 )
             }
 
-            val isTelegramSong = false
-            val filePath = MediaStorePermissionHelper.getFilePath(context, songId)
+            var storedCoverArtUri: String? = null
+            val filePath = getFilePathFromMediaStore(songId)
 
-            if (filePath.isNullOrBlank() && !isTelegramSong) {
+            if (filePath.isNullOrBlank()) {
                 Timber.tag(TAG).e("Could not get file path for songId: $songId")
                 return@withContext SongMetadataEditResult(
                     success = false,
@@ -410,14 +410,8 @@ class SongMetadataEditor(
             }
 
             val fileUpdateSuccess = if (!fileExists) {
-                if (isTelegramSong) {
-                    Timber.tag(TAG)
-                        .w("METADATA_EDIT: Telegram file not found (streaming?). Skipping file tags, updating DB only.")
-                    true
-                } else {
-                    Timber.tag(TAG).e("METADATA_EDIT: File does not exist: $finalFilePath")
-                    false
-                }
+                Timber.tag(TAG).e("METADATA_EDIT: File does not exist at path: $finalFilePath")
+                false
             } else {
                 val tempFile = File(
                     context.cacheDir,
@@ -442,7 +436,7 @@ class SongMetadataEditor(
                                 writeBackSuccess = true
                                 Timber.tag(TAG).d("Successfully wrote metadata directly to raw file path")
                             } else {
-                                val uri = if (!isTelegramSong) MediaStorePermissionHelper.getMediaStoreUri(context, songId) else null
+                                val uri = MediaStorePermissionHelper.getMediaStoreUri(context, songId)
                                 if (uri != null) {
                                     context.contentResolver.openFileDescriptor(uri, "rwt")?.use { pfd ->
                                         FileOutputStream(pfd.fileDescriptor).use { output ->

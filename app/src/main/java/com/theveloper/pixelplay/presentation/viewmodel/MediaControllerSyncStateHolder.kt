@@ -68,7 +68,6 @@ class ControllerSyncCallbacks(
     val setTrackVolume: (Float) -> Unit,
     val emitToast: suspend (String) -> Unit,
     val showNoInternetDialog: suspend () -> Unit,
-    val ensureTelegramObservers: () -> Unit,
     val cancelSleepTimerForEot: () -> Unit,
     val resetLyricsSearchState: () -> Unit,
     val loadLyricsForCurrentSong: () -> Unit,
@@ -682,22 +681,6 @@ class MediaControllerSyncStateHolder @Inject constructor(
 
                     mediaItem?.let { transitionedItem ->
                         val song = resolveSongFromMediaItem(transitionedItem)
-
-                        // Offline check for Telegram songs
-                        if (song?.contentUriString?.startsWith("telegram:") == true) {
-                            cb.ensureTelegramObservers()
-                            val isOnline = connectivityStateHolder.isOnline.value
-                            if (!isOnline) {
-                                val fileId = song.telegramFileId
-                                if (fileId != null) {
-                                    val isCached = musicRepository.telegramRepository.isFileCached(fileId)
-                                    if (!isCached) {
-                                        playerCtrl.pause()
-                                        cb.showNoInternetDialog()
-                                    }
-                                }
-                            }
-                        }
 
                         val resolvedDuration = if (song != null) {
                             playbackStateHolder.resolveDurationForPlaybackState(

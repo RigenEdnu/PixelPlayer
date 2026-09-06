@@ -325,10 +325,6 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private fun ensureTelegramPlaybackObserversStarted() {
-        // Telegram removed
-    }
-
     private suspend fun refreshArtwork(updatedArtUri: String) {
         val currentState = playbackStateHolder.stablePlayerState.value
         val currentSong = currentState.currentSong
@@ -975,7 +971,6 @@ class PlayerViewModel @Inject constructor(
         sendToast = ::sendToast,
         emitToast = { _toastEvents.emit(it) },
         showNoInternetDialog = { _showNoInternetDialog.tryEmit(Unit) },
-        ensureTelegramObservers = ::ensureTelegramPlaybackObserversStarted,
         cancelTransitionScheduler = { mediaControllerSyncStateHolder.cancelTransitionScheduler() },
         incrementSongScore = ::incrementSongScore,
         resetPredictiveBackState = ::resetPredictiveBackState,
@@ -996,7 +991,6 @@ class PlayerViewModel @Inject constructor(
         setTrackVolume = { _trackVolume.value = it },
         emitToast = { _toastEvents.emit(it) },
         showNoInternetDialog = { _showNoInternetDialog.emit(Unit) },
-        ensureTelegramObservers = ::ensureTelegramPlaybackObserversStarted,
         cancelSleepTimerForEot = { cancelSleepTimer(suppressDefaultToast = true) },
         resetLyricsSearchState = ::resetLyricsSearchState,
         loadLyricsForCurrentSong = ::loadLyricsForCurrentSong,

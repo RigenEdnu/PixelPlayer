@@ -123,7 +123,6 @@ private data class Contributor(
     val avatarUrl: String? = null,
     @DrawableRes val iconRes: Int? = null,
     val githubUrl: String? = null,
-    val telegramUrl: String? = null,
     val contributions: Int? = null,
 )
 
@@ -892,11 +891,6 @@ private fun ContributorCard(
                     painterRes = R.drawable.github,
                     contentDescription = stringResource(R.string.about_cd_open_github_profile),
                     url = contributor.githubUrl,
-                )
-                SocialIconButton(
-                    painterRes = R.drawable.telegram,
-                    contentDescription = stringResource(R.string.about_cd_open_telegram),
-                    url = contributor.telegramUrl,
                 )
             }
         }

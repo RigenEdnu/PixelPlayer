@@ -23,7 +23,6 @@ import com.theveloper.pixelplay.data.database.NeteaseDao
 import com.theveloper.pixelplay.data.database.SongArtistCrossRef
 import com.theveloper.pixelplay.data.database.SongEntity
 import com.theveloper.pixelplay.data.database.SourceType
-import com.theveloper.pixelplay.data.database.resolveAlbumArtUri
 import com.theveloper.pixelplay.data.database.serializeArtistRefs
 import com.theveloper.pixelplay.data.diagnostics.AdvancedPerformanceDiagnostics
 import com.theveloper.pixelplay.data.diagnostics.PerformanceMetrics

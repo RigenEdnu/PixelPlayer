@@ -175,9 +175,6 @@ class PlaylistPreferencesRepository @Inject constructor(
     suspend fun setPlaylistsSortOption(optionKey: String) =
         userPreferencesRepository.setPlaylistsSortOption(optionKey)
 
-    suspend fun setShowTelegramCloudPlaylists(show: Boolean) =
-        userPreferencesRepository.setShowTelegramCloudPlaylists(show)
-
     suspend fun getPlaylistsOnce(): List<Playlist> {
         ensureMigratedIfNeeded()
         return userPlaylistsFlow.first()
