@@ -39,6 +39,9 @@ class PixelPlayApplication : Application(), ImageLoaderFactory, Configuration.Pr
     lateinit var workerFactory: HiltWorkerFactory
 
     @Inject
+    lateinit var imageLoader: dagger.Lazy<ImageLoader>
+
+    @Inject
     lateinit var localArtworkCoilFetcherFactory: dagger.Lazy<com.theveloper.pixelplay.data.image.LocalArtworkCoilFetcher.Factory>
 
     @Inject
@@ -46,9 +49,6 @@ class PixelPlayApplication : Application(), ImageLoaderFactory, Configuration.Pr
 
     @Inject
     lateinit var jellyfinCoilFetcherFactory: dagger.Lazy<com.theveloper.pixelplay.data.image.JellyfinCoilFetcher.Factory>
-
-    @Inject
-    lateinit var localArtworkCoilFetcherFactory: dagger.Lazy<com.theveloper.pixelplay.data.image.LocalArtworkCoilFetcher.Factory>
 
     @Inject
     lateinit var themeStateHolder: dagger.Lazy<ThemeStateHolder>
