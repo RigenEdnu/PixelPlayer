@@ -16,8 +16,6 @@ import com.kyant.taglib.TagLib
 import com.theveloper.pixelplay.data.database.ArtistEntity
 import com.theveloper.pixelplay.data.database.MusicDao
 import com.theveloper.pixelplay.data.database.SongArtistCrossRef
-import com.theveloper.pixelplay.data.database.TelegramDao // Added
-import com.theveloper.pixelplay.data.database.TelegramSongEntity // Added
 import com.theveloper.pixelplay.data.database.serializeArtistRefs
 import com.theveloper.pixelplay.data.model.ArtistRef
 import com.theveloper.pixelplay.data.preferences.UserPreferencesRepository
@@ -86,7 +84,6 @@ private sealed interface ReplayGainUpdate {
 class SongMetadataEditor(
     private val context: Context,
     private val musicDao: MusicDao,
-    private val telegramDao: TelegramDao, // Added
     private val userPreferencesRepository: UserPreferencesRepository
 ) {
 
@@ -286,12 +283,8 @@ class SongMetadataEditor(
                 )
             }
 
-            val isTelegramSong = songId < 0
-            val filePath = if (isTelegramSong) {
-                musicDao.getSongById(songId).first()?.filePath
-            } else {
-                getFilePathFromMediaStore(songId)
-            }
+            val isTelegramSong = false
+            val filePath = MediaStorePermissionHelper.getFilePath(context, songId)
 
             if (filePath.isNullOrBlank() && !isTelegramSong) {
                 Timber.tag(TAG).e("Could not get file path for songId: $songId")
@@ -491,37 +484,6 @@ class SongMetadataEditor(
                 )
             }
 
-            if (isTelegramSong) {
-                val songEntity = musicDao.getSongById(songId).first()
-                if (songEntity?.telegramChatId != null && songEntity.telegramFileId != null) {
-                    val telegramId = "${songEntity.telegramChatId}_${songEntity.telegramFileId}"
-                    val telegramSong = telegramDao.getSongsByIds(listOf(telegramId)).first().firstOrNull()
-                    if (telegramSong != null) {
-                        val updatedTelegramSong = telegramSong.copy(
-                            title = newTitle,
-                            artist = newArtist,
-                        )
-                        telegramDao.insertSongs(listOf(updatedTelegramSong))
-                        Timber.d("Updated TelegramDao for song: $telegramId")
-                    }
-                }
-            } else {
-                val mediaStoreSuccess = updateMediaStoreMetadata(
-                    songId = songId,
-                    title = newTitle,
-                    artist = newArtist,
-                    album = newAlbum,
-                    albumArtist = newAlbumArtist,
-                    genre = trimmedGenre,
-                    trackNumber = newTrackNumber,
-                    discNumber = newDiscNumber
-                )
-                if (!mediaStoreSuccess) {
-                    Timber.w("MediaStore update failed, but file was updated for songId: $songId")
-                }
-            }
-
-            var storedCoverArtUri: String? = null
             updateSongArtistMetadata(
                 songId = songId,
                 title = newTitle,

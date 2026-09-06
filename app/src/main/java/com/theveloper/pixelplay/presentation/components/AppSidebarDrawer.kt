@@ -34,7 +34,6 @@ sealed class DrawerDestination(val route: String) {
     object Home : DrawerDestination("home")
     object Equalizer : DrawerDestination("equalizer")
     object Settings : DrawerDestination("settings")
-    object Telegram : DrawerDestination("telegram")
 }
 
 @Composable
@@ -157,35 +156,8 @@ private fun DrawerContent(
         Spacer(modifier = Modifier.weight(1f))
 
         HorizontalDivider(
-            modifier = Modifier.padding(vertical = 8.dp),
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 16.dp),
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-        )
-
-        NavigationDrawerItem(
-            icon = {
-                Icon(
-                    imageVector = Icons.Rounded.Cloud,
-                    contentDescription = stringResource(R.string.auth_telegram_title)
-                )
-            },
-            label = {
-                Text(
-                    text = stringResource(R.string.auth_telegram_title),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            },
-            selected = selectedRoute == DrawerDestination.Telegram.route,
-            onClick = { onDestinationSelected(DrawerDestination.Telegram) },
-            modifier = Modifier.padding(vertical = 4.dp),
-            colors = NavigationDrawerItemDefaults.colors(
-                selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                unselectedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f),
-                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-            ),
-            shape = RoundedCornerShape(16.dp)
         )
 
         NavigationDrawerItem(

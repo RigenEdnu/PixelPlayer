@@ -165,7 +165,8 @@ object AppModule {
             PixelPlayDatabase.MIGRATION_38_39,
             PixelPlayDatabase.MIGRATION_39_40,
             PixelPlayDatabase.MIGRATION_40_41,
-            PixelPlayDatabase.MIGRATION_41_42
+            PixelPlayDatabase.MIGRATION_41_42,
+            PixelPlayDatabase.MIGRATION_42_43
         )
             .addCallback(PixelPlayDatabase.createRuntimeArtifactsCallback())
             .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
@@ -194,7 +195,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMusicDao(database: PixelPlayDatabase): MusicDao { // Proveer MusicDao
+    fun provideMusicDao(database: PixelPlayDatabase): MusicDao {
         return database.musicDao()
     }
 
@@ -351,12 +352,6 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideTelegramDao(database: PixelPlayDatabase): com.theveloper.pixelplay.data.database.TelegramDao {
-        return database.telegramDao()
-    }
-
-    @Singleton
-    @Provides
     fun provideNeteaseDao(database: PixelPlayDatabase): com.theveloper.pixelplay.data.database.NeteaseDao {
         return database.neteaseDao()
     }
@@ -376,9 +371,6 @@ object AppModule {
         searchHistoryDao: SearchHistoryDao,
         musicDao: MusicDao,
         lyricsRepository: LyricsRepository,
-        telegramDao: com.theveloper.pixelplay.data.database.TelegramDao,
-        telegramCacheManager: Lazy<com.theveloper.pixelplay.data.telegram.TelegramCacheManager>,
-        telegramRepository: Lazy<com.theveloper.pixelplay.data.telegram.TelegramRepository>,
         songRepository: SongRepository,
         favoritesDao: FavoritesDao,
         artistImageRepository: ArtistImageRepository,
@@ -391,9 +383,6 @@ object AppModule {
             searchHistoryDao = searchHistoryDao,
             musicDao = musicDao,
             lyricsRepository = lyricsRepository,
-            telegramDao = telegramDao,
-            telegramCacheManagerProvider = telegramCacheManager,
-            telegramRepositoryProvider = telegramRepository,
             songRepository = songRepository,
             favoritesDao = favoritesDao,
             artistImageRepository = artistImageRepository,
@@ -415,10 +404,9 @@ object AppModule {
     fun provideSongMetadataEditor(
         @ApplicationContext context: Context,
         musicDao: MusicDao,
-        telegramDao: com.theveloper.pixelplay.data.database.TelegramDao,
         userPreferencesRepository: UserPreferencesRepository
     ): SongMetadataEditor {
-        return SongMetadataEditor(context, musicDao, telegramDao, userPreferencesRepository)
+        return SongMetadataEditor(context, musicDao, userPreferencesRepository)
     }
 
     /**

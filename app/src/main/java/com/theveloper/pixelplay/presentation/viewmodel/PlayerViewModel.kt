@@ -190,7 +190,6 @@ class PlayerViewModel @Inject constructor(
     val syncManager: SyncManager, // Inyectar SyncManager
 
     private val dualPlayerEngine: DualPlayerEngine,
-    private val telegramCacheManagerProvider: Lazy<com.theveloper.pixelplay.data.telegram.TelegramCacheManager>,
     private val listeningStatsTracker: ListeningStatsTracker,
     private val dailyMixStateHolder: DailyMixStateHolder,
     private val lyricsStateHolder: LyricsStateHolder,
@@ -326,37 +325,8 @@ class PlayerViewModel @Inject constructor(
         }
     }
 
-    private var telegramPlaybackObserversStarted = false
-
     private fun ensureTelegramPlaybackObserversStarted() {
-        if (telegramPlaybackObserversStarted) return
-        telegramPlaybackObserversStarted = true
-
-        val telegramCacheManager = telegramCacheManagerProvider.get()
-        val telegramRepository = musicRepository.telegramRepository
-
-        viewModelScope.launch {
-            launch {
-                telegramCacheManager.embeddedArtUpdated.collect { updatedArtUri ->
-                    refreshArtwork(updatedArtUri)
-                }
-            }
-
-            launch {
-                telegramRepository.downloadCompleted.collect {
-                    val currentSong = playbackStateHolder.stablePlayerState.value.currentSong
-                    if (currentSong != null && currentSong.contentUriString.startsWith("telegram:")) {
-                        val uri = Uri.parse(currentSong.contentUriString)
-                        val chatId = uri.host?.toLongOrNull()
-                        val messageId = uri.pathSegments.firstOrNull()?.toLongOrNull()
-
-                        if (chatId != null && messageId != null) {
-                            refreshArtwork("telegram_art://$chatId/$messageId")
-                        }
-                    }
-                }
-            }
-        }
+        // Telegram removed
     }
 
     private suspend fun refreshArtwork(updatedArtUri: String) {

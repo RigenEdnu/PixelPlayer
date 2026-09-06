@@ -664,15 +664,7 @@ private fun AboutHeroCard(
                         iconRes = R.drawable.github,
                         contentDescription = stringResource(R.string.about_cd_open_github_repo),
                         onClick = { openUrl(context, "https://github.com/theovilardo/PixelPlayer") },
-                        modifier = Modifier.weight(1f),
-                    )
-                    SocialChip(
-                        label = stringResource(R.string.about_telegram_label),
-                        subtitle = stringResource(R.string.about_telegram_subtitle),
-                        iconRes = R.drawable.telegram,
-                        contentDescription = stringResource(R.string.about_cd_join_telegram),
-                        onClick = { openUrl(context, "https://t.me/thevelopersupport") },
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.fillMaxWidth(),
                     )
                 }
             }

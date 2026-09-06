@@ -15,8 +15,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         ArtistEntity::class,
         TransitionRuleEntity::class,
         SongArtistCrossRef::class,
-        TelegramSongEntity::class,
-        TelegramChannelEntity::class,
         SongEngagementEntity::class,
         FavoritesEntity::class,
         LyricsEntity::class,
@@ -30,13 +28,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         QqMusicPlaylistEntity::class,
         NavidromeSongEntity::class,
         NavidromePlaylistEntity::class,
-        TelegramTopicEntity::class,
         JellyfinSongEntity::class,
         JellyfinPlaylistEntity::class,
         AiCacheEntity::class,
         AiUsageEntity::class
     ],
-    version = 42,
+    version = 43,
     exportSchema = true
 )
 abstract class PixelPlayDatabase : RoomDatabase() {
@@ -44,7 +41,6 @@ abstract class PixelPlayDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
     abstract fun musicDao(): MusicDao
     abstract fun transitionDao(): TransitionDao
-    abstract fun telegramDao(): TelegramDao
     abstract fun engagementDao(): EngagementDao
     abstract fun favoritesDao(): FavoritesDao
     abstract fun lyricsDao(): LyricsDao
@@ -744,6 +740,16 @@ abstract class PixelPlayDatabase : RoomDatabase() {
                 db.execSQL("CREATE INDEX IF NOT EXISTS index_navidrome_songs_navidrome_id ON navidrome_songs(navidrome_id)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS index_navidrome_songs_playlist_id ON navidrome_songs(playlist_id)")
                 db.execSQL("CREATE INDEX IF NOT EXISTS index_navidrome_songs_playlist_id_date_added ON navidrome_songs(playlist_id, date_added)")
+            }
+        }
+
+        val MIGRATION_42_43 = object : Migration(42, 43) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // Drop all telegram tables and clean up telegram songs from unified table
+                db.execSQL("DROP TABLE IF EXISTS telegram_songs")
+                db.execSQL("DROP TABLE IF EXISTS telegram_channels")
+                db.execSQL("DROP TABLE IF EXISTS telegram_topics")
+                db.execSQL("DELETE FROM songs WHERE source_type = 1")
             }
         }
 

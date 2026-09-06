@@ -238,26 +238,6 @@ interface MusicDao {
     @Query("DELETE FROM lyrics WHERE songId IN (:songIds)")
     suspend fun deleteLyricsBySongIds(songIds: List<Long>)
 
-    @Query("SELECT id FROM songs WHERE source_type = 1")
-    suspend fun getAllTelegramSongIds(): List<Long>
-
-    @Query("""
-        SELECT id FROM songs
-        WHERE source_type = 1
-        AND (telegram_chat_id = :chatId
-             OR content_uri_string LIKE 'telegram://' || :chatId || '/%')
-    """)
-    suspend fun getTelegramSongIdsByChatId(chatId: Long): List<Long>
-
-    @Query("""
-        SELECT s.id FROM songs s
-        INNER JOIN telegram_songs ts
-            ON ts.chat_id = s.telegram_chat_id
-            AND ('telegram://' || ts.chat_id || '/' || ts.message_id) = s.content_uri_string
-        WHERE ts.chat_id = :chatId AND ts.thread_id = :threadId
-    """)
-    suspend fun getTelegramSongIdsByTopicId(chatId: Long, threadId: Long): List<Long>
-
     @Query("SELECT id FROM songs WHERE source_type = 2")
     suspend fun getAllNeteaseSongIds(): List<Long>
 
@@ -319,27 +299,6 @@ interface MusicDao {
         val jellyfinSongIds = getAllJellyfinSongIds()
         if (jellyfinSongIds.isEmpty()) return
         deleteSongsAndRelatedData(jellyfinSongIds)
-    }
-
-    @Transaction
-    suspend fun clearAllTelegramSongs() {
-        val telegramSongIds = getAllTelegramSongIds()
-        if (telegramSongIds.isEmpty()) return
-        deleteSongsAndRelatedData(telegramSongIds)
-    }
-
-    @Transaction
-    suspend fun clearTelegramSongsForChat(chatId: Long) {
-        val telegramSongIds = getTelegramSongIdsByChatId(chatId)
-        if (telegramSongIds.isEmpty()) return
-        deleteSongsAndRelatedData(telegramSongIds)
-    }
-
-    @Transaction
-    suspend fun clearTelegramSongsForTopic(chatId: Long, threadId: Long) {
-        val songIds = getTelegramSongIdsByTopicId(chatId, threadId)
-        if (songIds.isEmpty()) return
-        deleteSongsAndRelatedData(songIds)
     }
 
     /**
