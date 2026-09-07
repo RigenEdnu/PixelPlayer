@@ -654,8 +654,8 @@ class LyricsRepositoryImpl @Inject constructor(
         val artistScore = artistMatchScore(song.displayArtist, response.artistName)
         if (!isUnknownArtist(song.displayArtist) && artistScore == null) return null
 
-        val durationScore = (durationTolerance - durationDiff).coerceAtLeast(0.0).toInt()
-        val syncedScore = if (hasSynced) 10 else 0
+        val durationScore = ((durationTolerance - durationDiff) * 5.0).coerceAtLeast(0.0).toInt()
+        val syncedScore = if (hasSynced) 15 else 0
         return titleScore + (artistScore ?: 0) + durationScore + syncedScore
     }
 
@@ -667,7 +667,9 @@ class LyricsRepositoryImpl @Inject constructor(
         return when (mode) {
             RemoteLyricsMatchMode.AUTOMATIC -> {
                 if (hasSyncedLyrics) {
-                    (songDurationSeconds * 0.02).coerceIn(5.0, 8.0)
+                    // Strict tolerance for synced lyrics: 2% of duration, clamped between 2.0s and 3.5s
+                    // Avoids picking short cuts/radio edits with wrong intro timings
+                    (songDurationSeconds * 0.015).coerceIn(2.0, 3.5)
                 } else {
                     (songDurationSeconds * 0.04).coerceIn(8.0, 15.0)
                 }
