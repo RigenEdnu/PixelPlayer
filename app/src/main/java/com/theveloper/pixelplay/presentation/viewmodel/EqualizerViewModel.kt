@@ -298,7 +298,7 @@ class EqualizerViewModel @Inject constructor(
                 userPreferencesRepository.setDontShowBitPerfectEqWarning(true)
             }
         }
-        applyEqualizerEnabled(true)
+        forceSetEnabled(true)
     }
 
     private fun forceSetEnabled(enabled: Boolean) {
@@ -317,7 +317,7 @@ class EqualizerViewModel @Inject constructor(
             _uiState.update { it.copy(showBitPerfectDspWarning = true) }
             return
         }
-        applyEqualizerEnabled(enabled)
+        forceSetEnabled(enabled)
     }
 
     fun toggleEqualizer() {
