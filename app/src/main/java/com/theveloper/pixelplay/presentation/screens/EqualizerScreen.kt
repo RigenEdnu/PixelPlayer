@@ -207,6 +207,7 @@ fun EqualizerScreen(
     }
 
     if (uiState.showBitPerfectDspWarning) {
+        var dontShowAgain by remember { mutableStateOf(false) }
         androidx.compose.material3.AlertDialog(
             onDismissRequest = { equalizerViewModel.dismissBitPerfectDspWarning() },
             title = {
@@ -216,19 +217,37 @@ fun EqualizerScreen(
                 )
             },
             text = {
-                Text(
-                    text = stringResource(R.string.equalizer_bit_perfect_dsp_warning_message),
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Text(
+                        text = stringResource(R.string.equalizer_bit_perfect_dsp_warning_message),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { dontShowAgain = !dontShowAgain }
+                    ) {
+                        Checkbox(
+                            checked = dontShowAgain,
+                            onCheckedChange = { dontShowAgain = it }
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = stringResource(R.string.equalizer_bit_perfect_dsp_warning_dont_show_again),
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
             },
             confirmButton = {
-                TextButton(onClick = { equalizerViewModel.confirmEnableWithBitPerfect() }) {
+                TextButton(onClick = { equalizerViewModel.confirmEnableWithBitPerfect(dontShowAgain) }) {
                     Text(stringResource(R.string.equalizer_bit_perfect_dsp_warning_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { equalizerViewModel.dismissBitPerfectDspWarning() }) {
-                    Text(stringResource(R.string.equalizer_bit_perfect_dsp_warning_cancel))
+                    Text(stringResource(R.string.equalizer_bit_perfect_dsp_warning_dismiss))
                 }
             }
         )

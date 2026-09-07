@@ -51,6 +51,7 @@ data class EqualizerUiState(
     val pinnedPresetsNames: List<String> = emptyList(), // Added
     val isAutoEqEnabled: Boolean = false,
     val isBitPerfectEnabled: Boolean = false,
+    val dontShowBitPerfectEqWarning: Boolean = false,
     val showBitPerfectDspWarning: Boolean = false,
 ) {
     // Computed property for accessible presets (Pinned)
@@ -279,15 +280,25 @@ class EqualizerViewModel @Inject constructor(
                 _uiState.update { it.copy(isBitPerfectEnabled = bitPerfect) }
             }
         }
+        viewModelScope.launch {
+            userPreferencesRepository.dontShowBitPerfectEqWarningFlow.collect { dontShow ->
+                _uiState.update { it.copy(dontShowBitPerfectEqWarning = dontShow) }
+            }
+        }
     }
 
     fun dismissBitPerfectDspWarning() {
         _uiState.update { it.copy(showBitPerfectDspWarning = false) }
     }
 
-    fun confirmEnableWithBitPerfect() {
+    fun confirmEnableWithBitPerfect(dontShowAgain: Boolean = false) {
         _uiState.update { it.copy(showBitPerfectDspWarning = false) }
-        forceSetEnabled(true)
+        if (dontShowAgain) {
+            viewModelScope.launch {
+                userPreferencesRepository.setDontShowBitPerfectEqWarning(true)
+            }
+        }
+        applyEqualizerEnabled(true)
     }
 
     private fun forceSetEnabled(enabled: Boolean) {
@@ -302,11 +313,11 @@ class EqualizerViewModel @Inject constructor(
     }
 
     fun setEnabled(enabled: Boolean) {
-        if (enabled && _uiState.value.isBitPerfectEnabled) {
+        if (enabled && _uiState.value.isBitPerfectEnabled && !_uiState.value.dontShowBitPerfectEqWarning) {
             _uiState.update { it.copy(showBitPerfectDspWarning = true) }
             return
         }
-        forceSetEnabled(enabled)
+        applyEqualizerEnabled(enabled)
     }
 
     fun toggleEqualizer() {

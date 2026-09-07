@@ -139,6 +139,7 @@ class UserPreferencesRepository @Inject constructor(
         val IS_CROSSFADE_ENABLED = booleanPreferencesKey("is_crossfade_enabled")
         val HI_FI_MODE_ENABLED = booleanPreferencesKey("hi_fi_mode_enabled")
         val BIT_PERFECT_ENABLED = booleanPreferencesKey("bit_perfect_enabled")
+        val DONT_SHOW_BIT_PERFECT_EQ_WARNING = booleanPreferencesKey("dont_show_bit_perfect_eq_warning")
         val CROSSFADE_DURATION = intPreferencesKey("crossfade_duration")
         val CUSTOM_GENRES = stringSetPreferencesKey("custom_genres")
         val CUSTOM_GENRE_ICONS = stringPreferencesKey("custom_genre_icons")
@@ -353,6 +354,13 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setBitPerfectEnabled(enabled: Boolean) {
         dataStore.edit { it[PreferencesKeys.BIT_PERFECT_ENABLED] = enabled }
+    }
+
+    val dontShowBitPerfectEqWarningFlow: Flow<Boolean> =
+        pref { it[PreferencesKeys.DONT_SHOW_BIT_PERFECT_EQ_WARNING] ?: false }
+
+    suspend fun setDontShowBitPerfectEqWarning(dontShow: Boolean) {
+        dataStore.edit { it[PreferencesKeys.DONT_SHOW_BIT_PERFECT_EQ_WARNING] = dontShow }
     }
 
     val keepPlayingInBackgroundFlow: Flow<Boolean> =

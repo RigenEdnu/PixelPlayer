@@ -61,5 +61,6 @@
     <string name="equalizer_bit_perfect_dsp_warning_title">Mode Bit-Exact + DSP</string>
     <string name="equalizer_bit_perfect_dsp_warning_message">Mode Bit-Perfect sedang aktif. Mengaktifkan Equalizer memodifikasi data bit audio asli untuk penyesuaian frekuensi suara. Output akan berjalan dalam mode Hi-Res Bit-Exact + DSP. Lanjutkan?</string>
     <string name="equalizer_bit_perfect_dsp_warning_confirm">Aktifkan dengan DSP</string>
-    <string name="equalizer_bit_perfect_dsp_warning_cancel">Tetap Murni</string>
+    <string name="equalizer_bit_perfect_dsp_warning_dismiss">Tetap Murni</string>
+    <string name="equalizer_bit_perfect_dsp_warning_dont_show_again">Jangan tampilkan lagi</string>
 </resources>
