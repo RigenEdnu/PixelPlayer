@@ -1064,8 +1064,32 @@ class LyricsRepositoryImpl @Inject constructor(
             val json = gson.toJson(lyricsData)
             file.writeText(json)
             Log.d(TAG, "Saved lyrics to JSON cache: ${file.absolutePath}")
+
+            // Also auto-export to physical .lrc beside the audio file if accessible
+            tryExportPhysicalLrcFile(song, lyrics)
         } catch (e: Exception) {
             Log.e(TAG, "Error saving lyrics to JSON cache: ${e.message}", e)
+        }
+    }
+
+    private fun tryExportPhysicalLrcFile(song: Song, lyrics: Lyrics) {
+        try {
+            if (song.path.isBlank()) return
+            val songFile = File(song.path)
+            val parentDir = songFile.parentFile ?: return
+            if (!parentDir.exists() || !parentDir.canWrite()) return
+
+            val lrcFile = File(parentDir, "${songFile.nameWithoutExtension}.lrc")
+            // Don't overwrite if user already has an existing physical .lrc
+            if (lrcFile.exists()) return
+
+            val content = LyricsUtils.toLrcString(lyrics, preferSynced = !lyrics.synced.isNullOrEmpty())
+            if (content.isNotBlank()) {
+                lrcFile.writeText(content)
+                Log.d(TAG, "Auto-saved physical .lrc file: ${lrcFile.absolutePath}")
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Could not auto-write physical .lrc (scoped storage restrictions or read-only folder): ${e.message}")
         }
     }
 

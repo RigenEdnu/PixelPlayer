@@ -449,11 +449,11 @@ object AppModule {
             .readTimeout(8, java.util.concurrent.TimeUnit.SECONDS)
             .writeTimeout(8, java.util.concurrent.TimeUnit.SECONDS)
             .retryOnConnectionFailure(true)
-            // Add User-Agent header (required by some APIs)
+            // Add User-Agent header (required by some APIs, specifically LRCLIB format)
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
                 val requestWithUserAgent = originalRequest.newBuilder()
-                    .header("User-Agent", "PixelPlayer/1.0 (Android; Music Player)")
+                    .header("User-Agent", "PixelPlayer/1.0.0 (https://github.com/PixelPlayer)")
                     .build()
                 chain.proceed(requestWithUserAgent)
             }
@@ -509,7 +509,7 @@ object AppModule {
             .addInterceptor { chain ->
                 val originalRequest = chain.request()
                 val requestWithHeaders = originalRequest.newBuilder()
-                    .header("User-Agent", "PixelPlayer/1.0 (Android; Music Player)")
+                    .header("User-Agent", "PixelPlayer/1.0.0 (https://github.com/PixelPlayer)")
                     .header("Accept", "application/json")
                     .build()
                 chain.proceed(requestWithHeaders)
