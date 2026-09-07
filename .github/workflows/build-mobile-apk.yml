@@ -69,6 +69,16 @@ jobs:
           ./gradlew :app:assembleRelease -Ppixelplay.enableAbiSplits=false --stacktrace --info
           ./gradlew :app:assembleRelease -Ppixelplay.enableAbiSplits=true -Ppixelplay.targetAbis="$TARGET_ABIS" --stacktrace --info
 
+      - name: Upload Build Reports on Failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-failure-reports
+          path: |
+            **/build/reports/
+            **/build/outputs/logs/
+          if-no-files-found: ignore
+
       - name: Verify APK Signatures
         run: |
           BUILD_TOOLS_VERSION="$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -n 1)"
