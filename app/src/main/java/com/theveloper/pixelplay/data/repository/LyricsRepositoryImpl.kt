@@ -763,7 +763,16 @@ class LyricsRepositoryImpl @Inject constructor(
             return responseVariants.isEmpty()
         }
 
-        return responseVariants == songVariants
+        // Exact match of variant keywords (e.g. remix == remix)
+        if (responseVariants == songVariants) return true
+
+        // Fallback: if remote response is the original/clean version (no variant tags)
+        // and provides synced lyrics, allow it rather than returning no lyrics at all.
+        if (responseVariants.isEmpty() && !response.syncedLyrics.isNullOrBlank()) {
+            return true
+        }
+
+        return false
     }
 
     private fun baseTitleForMatching(title: String): String {
@@ -1437,8 +1446,11 @@ class LyricsRepositoryImpl @Inject constructor(
                     responses = uniqueResults,
                     mode = RemoteLyricsMatchMode.CANDIDATE
                 )
-                val results = rankedMatches.mapNotNull { match ->
-                    val response = match.response
+                val results = (if (rankedMatches.isNotEmpty()) {
+                    rankedMatches.map { it.response }
+                } else {
+                    uniqueResults
+                }).mapNotNull { response ->
                     val rawLyrics = response.syncedLyrics ?: response.plainLyrics ?: return@mapNotNull null
                     val parsedLyrics = LyricsUtils.parseLyrics(rawLyrics).copy(areFromRemote = true)
                     if (!parsedLyrics.isValid()) {
@@ -1448,7 +1460,7 @@ class LyricsRepositoryImpl @Inject constructor(
                     val hasSynced = !response.syncedLyrics.isNullOrEmpty()
                     LogUtils.d(this@LyricsRepositoryImpl, "  Found: ${response.name} by ${response.artistName} (synced: $hasSynced)")
                     LyricsSearchResult(response, parsedLyrics, rawLyrics)
-                }
+                }.sortedByDescending { !it.record.syncedLyrics.isNullOrEmpty() }
 
                 if (results.isNotEmpty()) {
                     val syncedCount = results.count { !it.record.syncedLyrics.isNullOrEmpty() }
@@ -1509,7 +1521,10 @@ class LyricsRepositoryImpl @Inject constructor(
                 if (!parsed.isValid()) return@mapNotNull null
 
                 LyricsSearchResult(response, parsed, rawLyrics)
-            }.sortedByDescending { !it.record.syncedLyrics.isNullOrEmpty() }
+            }.sortedWith(
+                compareByDescending<LyricsSearchResult> { !it.record.syncedLyrics.isNullOrEmpty() }
+                    .thenBy { abs(it.record.duration - (cleanTitle.length)) }
+            )
 
             if (results.isEmpty()) {
                 Result.failure(NoLyricsFoundException(query))

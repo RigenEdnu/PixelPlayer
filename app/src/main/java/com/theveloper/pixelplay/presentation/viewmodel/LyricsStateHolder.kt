@@ -224,6 +224,8 @@ class LyricsStateHolder @Inject constructor(
                 )
             }
 
+            var embeddedStaticLyrics: Pair<String, Lyrics>? = null
+
             // Try local sources in priority order.
             for (sourceCheck in localSourceChecks) {
                 val result = withContext(Dispatchers.IO) { sourceCheck() }
@@ -231,37 +233,58 @@ class LyricsStateHolder @Inject constructor(
                     val (rawLyrics, messageResId) = result
                     val parsed = LyricsUtils.parseLyrics(rawLyrics)
                     if (hasValidLyrics(parsed)) {
-                        val lyrics = parsed.copy(areFromRemote = false)
-                        _searchUiState.value = LyricsSearchUiState.Success(lyrics)
+                        // If local lyrics has synced timestamps, it is complete. Use it immediately.
+                        if (!parsed.synced.isNullOrEmpty()) {
+                            val lyrics = parsed.copy(areFromRemote = false)
+                            _searchUiState.value = LyricsSearchUiState.Success(lyrics)
 
-                        val songId = song.id.toLongOrNull()
-                        if (songId != null) {
-                            musicRepository.updateLyrics(songId, rawLyrics)
+                            val songId = song.id.toLongOrNull()
+                            if (songId != null) {
+                                musicRepository.updateLyrics(songId, rawLyrics)
+                            }
+
+                            _songUpdates.emit(song.copy(lyrics = rawLyrics) to lyrics)
+                            _messageEvents.emit(contextHelper(messageResId))
+                            return@launch
+                        } else {
+                            // Remember local plain lyrics for hybrid fallback if remote has synced lyrics
+                            if (embeddedStaticLyrics == null) {
+                                embeddedStaticLyrics = Pair(rawLyrics, parsed)
+                            }
                         }
-
-                        _songUpdates.emit(song.copy(lyrics = rawLyrics) to lyrics)
-                        _messageEvents.emit(contextHelper(messageResId))
-                        return@launch
                     }
                 }
             }
 
-            // Fall through to remote fetch.
+            // Fall through to remote fetch (to obtain synced lyrics from LRCLIB).
             if (forcePickResults) {
                 musicRepository.searchRemoteLyrics(song)
                     .onSuccess { (query, results) ->
                         _searchUiState.value = LyricsSearchUiState.PickResult(query, results)
                     }
                     .onFailure { error ->
-                        handleError(error)
+                        if (embeddedStaticLyrics != null) {
+                            val (raw, parsed) = embeddedStaticLyrics
+                            _searchUiState.value = LyricsSearchUiState.Success(parsed.copy(areFromRemote = false))
+                            _songUpdates.emit(song.copy(lyrics = raw) to parsed)
+                        } else {
+                            handleError(error)
+                        }
                     }
             } else {
                 musicRepository.getLyricsFromRemote(song)
-                    .onSuccess { (lyrics, rawLyrics) ->
-                        _searchUiState.value = LyricsSearchUiState.Success(lyrics)
+                    .onSuccess { (remoteLyrics, rawLyrics) ->
+                        // Hybrid merge: if remote has synced and we have local plain lyrics, preserve local plain!
+                        val mergedLyrics = if (!remoteLyrics.synced.isNullOrEmpty() && embeddedStaticLyrics != null && !embeddedStaticLyrics.second.plain.isNullOrEmpty()) {
+                            remoteLyrics.copy(plain = embeddedStaticLyrics.second.plain)
+                        } else {
+                            remoteLyrics
+                        }
+
+                        _searchUiState.value = LyricsSearchUiState.Success(mergedLyrics)
                         val refreshedAlbumArtUri = persistLyricsToFileMetadataIfPossible(song, rawLyrics)
                         val updatedSong = song.withPersistedLyrics(rawLyrics, refreshedAlbumArtUri)
-                        _songUpdates.emit(updatedSong to lyrics)
+                        _songUpdates.emit(updatedSong to mergedLyrics)
                     }
                     .onFailure { error ->
                         if (error is NoLyricsFoundException) {
@@ -270,9 +293,23 @@ class LyricsStateHolder @Inject constructor(
                                 .onSuccess { (query, results) ->
                                     _searchUiState.value = LyricsSearchUiState.PickResult(query, results)
                                 }
-                                .onFailure { searchError -> handleError(searchError) }
+                                .onFailure { searchError ->
+                                    if (embeddedStaticLyrics != null) {
+                                        val (raw, parsed) = embeddedStaticLyrics
+                                        _searchUiState.value = LyricsSearchUiState.Success(parsed.copy(areFromRemote = false))
+                                        _songUpdates.emit(song.copy(lyrics = raw) to parsed)
+                                    } else {
+                                        handleError(searchError)
+                                    }
+                                }
                         } else {
-                            handleError(error)
+                            if (embeddedStaticLyrics != null) {
+                                val (raw, parsed) = embeddedStaticLyrics
+                                _searchUiState.value = LyricsSearchUiState.Success(parsed.copy(areFromRemote = false))
+                                _songUpdates.emit(song.copy(lyrics = raw) to parsed)
+                            } else {
+                                handleError(error)
+                            }
                         }
                     }
             }
