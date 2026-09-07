@@ -287,6 +287,8 @@
     <string name="settings_hifi_mode_title">Hi-Fi-Modus</string>
     <string name="settings_hifi_mode_supported_subtitle">32-Bit-Float-Ausgabe für maximale Qualität. Bei Aussetzern deaktivieren.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Auf diesem Gerät nicht verfügbar (PCM_FLOAT AudioTrack fehlt).</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect-Ausgabe</string>
+    <string name="settings_bit_perfect_mode_subtitle">Umgeht internes Downsampling und Softwarefilter für verlustfreie Audioausgabe.</string>
     <string name="settings_persistent_shuffle_title">Shuffle merken</string>
     <string name="settings_persistent_shuffle_subtitle">Shuffle bleibt aktiv, auch nachdem die App geschlossen wurde.</string>
     <string name="settings_show_queue_history_title">Queue-Verlauf anzeigen</string>

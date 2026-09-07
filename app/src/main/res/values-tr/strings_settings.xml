@@ -287,6 +287,8 @@
     <string name="settings_hifi_mode_title">Hi-Fi Modu</string>
     <string name="settings_hifi_mode_supported_subtitle">Float 32-bit ses çıkışı. Cihazınızda oynatırken takılmalar oluyorsa devre dışı bırakın.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Bu cihazda desteklenmiyor (PCM_FLOAT AudioTrack mevcut değil).</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect Çıkış</string>
+    <string name="settings_bit_perfect_mode_subtitle">Kayıpsız saf ses için dahili alt örnekleme ve yazılım filtrelerini atlar.</string>
     <string name="settings_persistent_shuffle_title">Kalıcı Karışık Çal</string>
     <string name="settings_persistent_shuffle_subtitle">Uygulama kapatıldıktan sonra bile karışık çalma ayarını hatırla.</string>
     <string name="settings_show_queue_history_title">Kuyruk geçmişini göster</string>

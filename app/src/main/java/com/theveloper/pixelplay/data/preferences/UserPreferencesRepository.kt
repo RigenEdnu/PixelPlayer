@@ -138,6 +138,7 @@ class UserPreferencesRepository @Inject constructor(
         val KEEP_PLAYING_IN_BACKGROUND = booleanPreferencesKey("keep_playing_in_background")
         val IS_CROSSFADE_ENABLED = booleanPreferencesKey("is_crossfade_enabled")
         val HI_FI_MODE_ENABLED = booleanPreferencesKey("hi_fi_mode_enabled")
+        val BIT_PERFECT_ENABLED = booleanPreferencesKey("bit_perfect_enabled")
         val CROSSFADE_DURATION = intPreferencesKey("crossfade_duration")
         val CUSTOM_GENRES = stringSetPreferencesKey("custom_genres")
         val CUSTOM_GENRE_ICONS = stringPreferencesKey("custom_genre_icons")
@@ -345,6 +346,13 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setHiFiModeEnabled(enabled: Boolean) {
         dataStore.edit { it[PreferencesKeys.HI_FI_MODE_ENABLED] = enabled }
+    }
+
+    val bitPerfectEnabledFlow: Flow<Boolean> =
+        pref { it[PreferencesKeys.BIT_PERFECT_ENABLED] ?: false }
+
+    suspend fun setBitPerfectEnabled(enabled: Boolean) {
+        dataStore.edit { it[PreferencesKeys.BIT_PERFECT_ENABLED] = enabled }
     }
 
     val keepPlayingInBackgroundFlow: Flow<Boolean> =

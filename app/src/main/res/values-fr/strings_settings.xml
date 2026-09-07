@@ -281,8 +281,10 @@
     <string name="settings_crossfade_subtitle">Activer une transition douce entre les chansons.</string>
     <string name="settings_crossfade_duration_title">Durée du fondu enchaîné</string>
     <string name="settings_hifi_mode_title">Mode Hi-Fi</string>
-    <string name="settings_hifi_mode_supported_subtitle">Sortie audio Float 32 bits. Désactivez si la lecture saccade sur votre appareil.</string>
+    <string name="settings_hifi_mode_supported_subtitle">Sortie audio flottante 32 bits. Désactivez si la lecture saccade.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Non pris en charge sur cet appareil (PCM_FLOAT AudioTrack indisponible).</string>
+    <string name="settings_bit_perfect_mode_title">Sortie Bit-Perfect</string>
+    <string name="settings_bit_perfect_mode_subtitle">Contourne le sous-échantillonnage interne et filtres logiciels pour un son pur sans perte.</string>
     <string name="settings_persistent_shuffle_title">Mode aléatoire persistant</string>
     <string name="settings_persistent_shuffle_subtitle">Se souvenir du réglage de lecture aléatoire même après la fermeture de l\'application.</string>
     <string name="settings_show_queue_history_title">Afficher l\'historique de la file</string>

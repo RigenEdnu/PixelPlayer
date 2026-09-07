@@ -285,8 +285,10 @@
     <string name="settings_crossfade_subtitle">Aktiver sømløs overgang mellom sanger.</string>
     <string name="settings_crossfade_duration_title">Varighet for crossfade</string>
     <string name="settings_hifi_mode_title">Hi-Fi-modus</string>
-    <string name="settings_hifi_mode_supported_subtitle">Float 32-bit lydutgang. Deaktiver hvis avspillingen hakker på enheten din.</string>
+    <string name="settings_hifi_mode_supported_subtitle">Float 32-bit lydutgang. Deaktiver hvis avspilling hakker.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Ikke støttet på denne enheten (PCM_FLOAT AudioTrack utilgjengelig).</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect-utgang</string>
+    <string name="settings_bit_perfect_mode_subtitle">Omgår intern nedsampling og programvarefiltre for ren tapsfri lyd.</string>
     <string name="settings_persistent_shuffle_title">Vedvarende blanding</string>
     <string name="settings_persistent_shuffle_subtitle">Husk blandingsinnstilling selv etter at appen er lukket.</string>
     <string name="settings_show_queue_history_title">Vis køhistorikk</string>

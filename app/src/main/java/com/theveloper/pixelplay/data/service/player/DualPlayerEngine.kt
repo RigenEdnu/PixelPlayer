@@ -245,6 +245,8 @@ class DualPlayerEngine @Inject constructor(
     private var scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     var hiFiModeEnabled: Boolean = false
         private set
+    var bitPerfectModeEnabled: Boolean = false
+        private set
     private var audioOffloadEnabled = !shouldDisableAudioOffloadByDefault()
     private var transitionJob: Job? = null
     private var bufferingFallbackJob: Job? = null
@@ -1029,15 +1031,20 @@ class DualPlayerEngine @Inject constructor(
                 enableFloatOutput: Boolean,
                 enableAudioOutputPlaybackParams: Boolean
             ): AudioSink {
-                return DefaultAudioSink.Builder(context)
-                    .setEnableFloatOutput(hiFiModeEnabled)
-                    .setEnableAudioOutputPlaybackParameters(enableAudioOutputPlaybackParams)
-                    .setAudioProcessorChain(
-                        DefaultAudioSink.DefaultAudioProcessorChain(
-                            HiResSampleRateCapAudioProcessor(),
-                            SurroundDownmixProcessor()
-                        )
+                val processorChain = if (bitPerfectModeEnabled) {
+                    // ponytail: bit-perfect bypasses sample-rate capping & surround downmix to preserve pristine PCM stream
+                    DefaultAudioSink.DefaultAudioProcessorChain()
+                } else {
+                    DefaultAudioSink.DefaultAudioProcessorChain(
+                        HiResSampleRateCapAudioProcessor(),
+                        SurroundDownmixProcessor()
                     )
+                }
+
+                return DefaultAudioSink.Builder(context)
+                    .setEnableFloatOutput(hiFiModeEnabled || bitPerfectModeEnabled)
+                    .setEnableAudioOutputPlaybackParameters(enableAudioOutputPlaybackParams && !bitPerfectModeEnabled)
+                    .setAudioProcessorChain(processorChain)
                     .build()
             }
 
@@ -1118,12 +1125,14 @@ class DualPlayerEngine @Inject constructor(
             setAudioAttributes(audioAttributes, false)
             val offloadPreferences = TrackSelectionParameters.AudioOffloadPreferences.Builder()
                 .setAudioOffloadMode(
-                    if (audioOffloadEnabled) {
+                    if (audioOffloadEnabled || bitPerfectModeEnabled) {
                         TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_ENABLED
                     } else {
                         TrackSelectionParameters.AudioOffloadPreferences.AUDIO_OFFLOAD_MODE_DISABLED
                     }
                 )
+                .setIsGaplessSupportRequired(false)
+                .setIsSpeedChangeSupportRequired(false)
                 .build()
             trackSelectionParameters = trackSelectionParameters.buildUpon()
                 .setAudioOffloadPreferences(offloadPreferences)
@@ -1176,6 +1185,12 @@ class DualPlayerEngine @Inject constructor(
         }
         hiFiModeEnabled = enabled
         rebuildPlayersPreservingMasterState("Hi-Fi mode set to $enabled")
+    }
+
+    fun setBitPerfectMode(enabled: Boolean) {
+        if (bitPerfectModeEnabled == enabled) return
+        bitPerfectModeEnabled = enabled
+        rebuildPlayersPreservingMasterState("Bit-Perfect mode set to $enabled")
     }
 
     suspend fun resolveCloudUri(uri: Uri): Uri = withContext(Dispatchers.IO) {

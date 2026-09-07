@@ -281,8 +281,10 @@
     <string name="settings_crossfade_subtitle">Aktifkan transisi halus antar lagu.</string>
     <string name="settings_crossfade_duration_title">Durasi Crossfade</string>
     <string name="settings_hifi_mode_title">Mode Hi-Fi</string>
-    <string name="settings_hifi_mode_supported_subtitle">Output audio Float 32-bit. Nonaktifkan jika pemutaran tersendat di perangkat Anda.</string>
+    <string name="settings_hifi_mode_supported_subtitle">Output audio 32-bit float. Nonaktifkan jika pemutaran tersendat di perangkat Anda.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Tidak didukung di perangkat ini (PCM_FLOAT AudioTrack tidak tersedia).</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect Output</string>
+    <string name="settings_bit_perfect_mode_subtitle">Bypass downsampling internal dan filter software untuk menyalurkan audio lossless murni.</string>
     <string name="settings_persistent_shuffle_title">Acak Persisten</string>
     <string name="settings_persistent_shuffle_subtitle">Ingat pengaturan acak bahkan setelah menutup aplikasi.</string>
     <string name="settings_show_queue_history_title">Tampilkan riwayat antrean</string>

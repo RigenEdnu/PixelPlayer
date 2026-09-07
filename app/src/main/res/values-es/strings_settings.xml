@@ -285,8 +285,10 @@
     <string name="settings_crossfade_subtitle">Habilitar transición suave entre canciones.</string>
     <string name="settings_crossfade_duration_title">Duración del fundido cruzado</string>
     <string name="settings_hifi_mode_title">Modo Hi‑Fi</string>
-    <string name="settings_hifi_mode_supported_subtitle">Salida de audio flotante de 32 bits. Desactívalo si la reproducción da tirones en tu dispositivo.</string>
+    <string name="settings_hifi_mode_supported_subtitle">Salida de audio flotante de 32 bits. Desactívalo si la reproducción se entrecorta.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">No compatible en este dispositivo (AudioTrack PCM_FLOAT no disponible).</string>
+    <string name="settings_bit_perfect_mode_title">Salida Bit-Perfect</string>
+    <string name="settings_bit_perfect_mode_subtitle">Omite el submuestreo interno y filtros de software para entregar audio sin pérdidas.</string>
     <string name="settings_persistent_shuffle_title">Aleatorio persistente</string>
     <string name="settings_persistent_shuffle_subtitle">Recordar el ajuste de reproducción aleatoria incluso después de cerrar la aplicación.</string>
     <string name="settings_show_queue_history_title">Mostrar historial de cola</string>

@@ -205,6 +205,34 @@ fun EqualizerScreen(
             onDismiss = { showCustomPresetsSheet = false }
         )
     }
+
+    if (uiState.showBitPerfectDspWarning) {
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { equalizerViewModel.dismissBitPerfectDspWarning() },
+            title = {
+                Text(
+                    text = stringResource(R.string.equalizer_bit_perfect_dsp_warning_title),
+                    style = MaterialTheme.typography.titleLarge
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.equalizer_bit_perfect_dsp_warning_message),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { equalizerViewModel.confirmEnableWithBitPerfect() }) {
+                    Text(stringResource(R.string.equalizer_bit_perfect_dsp_warning_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { equalizerViewModel.dismissBitPerfectDspWarning() }) {
+                    Text(stringResource(R.string.equalizer_bit_perfect_dsp_warning_cancel))
+                }
+            }
+        )
+    }
     
     ReorderPresetsSheet(
         visible = showReorderSheet,

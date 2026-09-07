@@ -502,6 +502,12 @@ class MusicService : MediaLibraryService() {
         }
 
         serviceScope.launch {
+            userPreferencesRepository.bitPerfectEnabledFlow.collect { enabled ->
+                engine.setBitPerfectMode(enabled)
+            }
+        }
+
+        serviceScope.launch {
             userPreferencesRepository.resumeOnHeadsetReconnectFlow.collect { enabled ->
                 resumeOnHeadsetReconnectEnabled = enabled
                 if (!enabled) {

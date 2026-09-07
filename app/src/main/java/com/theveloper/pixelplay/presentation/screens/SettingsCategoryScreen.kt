@@ -857,6 +857,13 @@ fun SettingsCategoryScreen(
                                     leadingIcon = { Icon(painterResource(R.drawable.outline_high_quality_24), null, tint = MaterialTheme.colorScheme.secondary) }
                                 )
                                 SwitchSettingItem(
+                                    title = stringResource(R.string.settings_bit_perfect_mode_title),
+                                    subtitle = stringResource(R.string.settings_bit_perfect_mode_subtitle),
+                                    checked = uiState.bitPerfectEnabled,
+                                    onCheckedChange = { settingsViewModel.setBitPerfectEnabled(it) },
+                                    leadingIcon = { Icon(painterResource(R.drawable.outline_high_quality_24), null, tint = MaterialTheme.colorScheme.secondary) }
+                                )
+                                SwitchSettingItem(
                                     title = stringResource(R.string.settings_persistent_shuffle_title),
                                     subtitle = stringResource(R.string.settings_persistent_shuffle_subtitle),
                                     checked = uiState.persistentShuffleEnabled,

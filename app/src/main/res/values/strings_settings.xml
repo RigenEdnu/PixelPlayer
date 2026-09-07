@@ -287,6 +287,8 @@
     <string name="settings_hifi_mode_title">Hi-Fi Mode</string>
     <string name="settings_hifi_mode_supported_subtitle">Float 32-bit audio output. Disable if playback stutters on your device.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Not supported on this device (PCM_FLOAT AudioTrack unavailable).</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect Output</string>
+    <string name="settings_bit_perfect_mode_subtitle">Bypasses internal downsampling and software filters for pristine lossless audio delivery.</string>
     <string name="settings_persistent_shuffle_title">Persistent Shuffle</string>
     <string name="settings_persistent_shuffle_subtitle">Remember shuffle setting even after closing the app.</string>
     <string name="settings_show_queue_history_title">Show queue history</string>

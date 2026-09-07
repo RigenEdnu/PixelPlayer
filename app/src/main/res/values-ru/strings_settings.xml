@@ -287,6 +287,8 @@
     <string name="settings_hifi_mode_title">Режим Hi-Fi</string>
     <string name="settings_hifi_mode_supported_subtitle">32-битный вывод звука с плавающей точкой. Отключите, если на вашем устройстве возникают заикания воспроизведения.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Не поддерживается на этом устройстве (PCM_FLOAT AudioTrack недоступен).</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect вывод</string>
+    <string name="settings_bit_perfect_mode_subtitle">Обход внутреннего даунсэмплинга и программных фильтров для чистого lossless звука.</string>
     <string name="settings_persistent_shuffle_title">Сохранять перемешивание</string>
     <string name="settings_persistent_shuffle_subtitle">Запоминать режим перемешивания даже после закрытия приложения.</string>
     <string name="settings_show_queue_history_title">Показывать историю очереди</string>

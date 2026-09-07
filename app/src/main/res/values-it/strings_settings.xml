@@ -285,8 +285,10 @@
     <string name="settings_crossfade_subtitle">Abilita transizione fluida tra brani.</string>
     <string name="settings_crossfade_duration_title">Durata crossfade</string>
     <string name="settings_hifi_mode_title">Modalità Hi-Fi</string>
-    <string name="settings_hifi_mode_supported_subtitle">Uscita audio float 32-bit. Disabilita se la riproduzione si interrompe sul tuo dispositivo.</string>
+    <string name="settings_hifi_mode_supported_subtitle">Uscita audio float a 32 bit. Disattiva se la riproduzione va a scatti.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">Non supportato su questo dispositivo (AudioTrack PCM_FLOAT non disponibile).</string>
+    <string name="settings_bit_perfect_mode_title">Uscita Bit-Perfect</string>
+    <string name="settings_bit_perfect_mode_subtitle">Bypassa sottocampionamento interno e filtri software per un audio lossless puro.</string>
     <string name="settings_persistent_shuffle_title">Shuffle persistente</string>
     <string name="settings_persistent_shuffle_subtitle">Ricorda l\'impostazione shuffle anche dopo aver chiuso l\'app.</string>
     <string name="settings_show_queue_history_title">Mostra cronologia coda</string>

@@ -58,4 +58,8 @@
     <string name="equalizer_import_preset_cd">Import equalizer preset</string>
     <string name="equalizer_import_success">Imported preset: %1$s</string>
     <string name="equalizer_import_error">Failed to import preset: %1$s</string>
+    <string name="equalizer_bit_perfect_dsp_warning_title">Bit-Exact + DSP Mode</string>
+    <string name="equalizer_bit_perfect_dsp_warning_message">Bit-Perfect mode is currently active. Enabling Equalizer modifies pristine audio bits to apply frequency adjustments. The output will run in high-res Bit-Exact + DSP mode instead of pure bit-perfect. Continue?</string>
+    <string name="equalizer_bit_perfect_dsp_warning_confirm">Enable with DSP</string>
+    <string name="equalizer_bit_perfect_dsp_warning_cancel">Keep Pure</string>
 </resources>

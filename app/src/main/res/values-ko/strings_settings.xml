@@ -285,8 +285,10 @@
     <string name="settings_crossfade_subtitle">노래 간 부드러운 전환을 활성화합니다.</string>
     <string name="settings_crossfade_duration_title">크로스페이드 지속 시간</string>
     <string name="settings_hifi_mode_title">Hi-Fi 모드</string>
-    <string name="settings_hifi_mode_supported_subtitle">32비트 부동 소수점 오디오 출력. 기기에서 재생이 끊기면 비활성화하세요.</string>
+    <string name="settings_hifi_mode_supported_subtitle">32비트 부동소수점 오디오 출력입니다. 재생 끊김 발생 시 비활성화하세요.</string>
     <string name="settings_hifi_mode_unsupported_subtitle">이 기기에서는 지원되지 않습니다 (PCM_FLOAT AudioTrack 사용 불가).</string>
+    <string name="settings_bit_perfect_mode_title">비트 퍼펙트 출력</string>
+    <string name="settings_bit_perfect_mode_subtitle">무손실 오디오 전달을 위해 내부 다운샘플링 및 소프트웨어 필터를 우회합니다.</string>
     <string name="settings_persistent_shuffle_title">셔플 상태 유지</string>
     <string name="settings_persistent_shuffle_subtitle">앱을 닫은 후에도 셔플 설정을 기억합니다.</string>
     <string name="settings_show_queue_history_title">대기열 기록 표시</string>

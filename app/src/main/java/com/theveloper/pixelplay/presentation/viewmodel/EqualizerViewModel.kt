@@ -50,6 +50,8 @@ data class EqualizerUiState(
     val customPresets: List<EqualizerPreset> = emptyList(), // Added
     val pinnedPresetsNames: List<String> = emptyList(), // Added
     val isAutoEqEnabled: Boolean = false,
+    val isBitPerfectEnabled: Boolean = false,
+    val showBitPerfectDspWarning: Boolean = false,
 ) {
     // Computed property for accessible presets (Pinned)
     val accessiblePresets: List<EqualizerPreset>
@@ -71,6 +73,7 @@ data class EqualizerUiState(
 class EqualizerViewModel @Inject constructor(
     private val equalizerManager: EqualizerManager,
     private val equalizerPreferencesRepository: EqualizerPreferencesRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     private val dualPlayerEngine: DualPlayerEngine,
     @param:dagger.hilt.android.qualifiers.ApplicationContext private val context: android.content.Context
 ) : ViewModel() {
@@ -101,6 +104,7 @@ class EqualizerViewModel @Inject constructor(
     init {
         initializeEqualizer()
         observeEqualizerState()
+        observeBitPerfectState()
         loadSystemVolume()
     }
     
@@ -244,6 +248,8 @@ class EqualizerViewModel @Inject constructor(
                     customPresets = customPresets,
                     pinnedPresetsNames = pinnedPresets,
                     isAutoEqEnabled = autoEqEnabled,
+                    isBitPerfectEnabled = _uiState.value.isBitPerfectEnabled,
+                    showBitPerfectDspWarning = _uiState.value.showBitPerfectDspWarning,
                     // Capabilities (Keep existing values)
                     isBassBoostSupported = _uiState.value.isBassBoostSupported,
                     isVirtualizerSupported = _uiState.value.isVirtualizerSupported,
@@ -267,7 +273,24 @@ class EqualizerViewModel @Inject constructor(
         }
     }
     
-    fun setEnabled(enabled: Boolean) {
+    private fun observeBitPerfectState() {
+        viewModelScope.launch {
+            userPreferencesRepository.bitPerfectEnabledFlow.collect { bitPerfect ->
+                _uiState.update { it.copy(isBitPerfectEnabled = bitPerfect) }
+            }
+        }
+    }
+
+    fun dismissBitPerfectDspWarning() {
+        _uiState.update { it.copy(showBitPerfectDspWarning = false) }
+    }
+
+    fun confirmEnableWithBitPerfect() {
+        _uiState.update { it.copy(showBitPerfectDspWarning = false) }
+        forceSetEnabled(true)
+    }
+
+    private fun forceSetEnabled(enabled: Boolean) {
         equalizerManager.setEnabled(enabled)
         _uiState.update { current ->
             current.copy(isEnabled = enabled)
@@ -276,6 +299,14 @@ class EqualizerViewModel @Inject constructor(
             equalizerManager.attachToAudioSessionIfNeeded(dualPlayerEngine.getAudioSessionId())
             equalizerPreferencesRepository.setEqualizerEnabled(enabled)
         }
+    }
+
+    fun setEnabled(enabled: Boolean) {
+        if (enabled && _uiState.value.isBitPerfectEnabled) {
+            _uiState.update { it.copy(showBitPerfectDspWarning = true) }
+            return
+        }
+        forceSetEnabled(enabled)
     }
 
     fun toggleEqualizer() {

@@ -285,8 +285,10 @@
     <string name="settings_crossfade_subtitle">启用歌曲之间的平滑过渡。</string>
     <string name="settings_crossfade_duration_title">淡入淡出时长</string>
     <string name="settings_hifi_mode_title">Hi-Fi 模式</string>
-    <string name="settings_hifi_mode_supported_subtitle">浮点 32 位音频输出。如果您的设备播放卡顿，请禁用此项。</string>
+    <string name="settings_hifi_mode_supported_subtitle">32 位浮点音频输出。如果设备播放卡顿请关闭。</string>
     <string name="settings_hifi_mode_unsupported_subtitle">此设备不支持（PCM_FLOAT AudioTrack 不可用）。</string>
+    <string name="settings_bit_perfect_mode_title">Bit-Perfect 源码输出</string>
+    <string name="settings_bit_perfect_mode_subtitle">绕过内部重采样和软件滤波器，直通无损音频信号。</string>
     <string name="settings_persistent_shuffle_title">持久随机播放</string>
     <string name="settings_persistent_shuffle_subtitle">即使关闭应用后也能记住随机播放设置。</string>
     <string name="settings_show_queue_history_title">显示队列历史记录</string>

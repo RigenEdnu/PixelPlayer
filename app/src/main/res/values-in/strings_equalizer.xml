@@ -58,4 +58,8 @@
     <string name="equalizer_import_preset_cd">Impor preset equalizer</string>
     <string name="equalizer_import_success">Berhasil mengimpor preset: %1$s</string>
     <string name="equalizer_import_error">Gagal mengimpor preset: %1$s</string>
+    <string name="equalizer_bit_perfect_dsp_warning_title">Mode Bit-Exact + DSP</string>
+    <string name="equalizer_bit_perfect_dsp_warning_message">Mode Bit-Perfect sedang aktif. Mengaktifkan Equalizer memodifikasi data bit audio asli untuk penyesuaian frekuensi suara. Output akan berjalan dalam mode Hi-Res Bit-Exact + DSP. Lanjutkan?</string>
+    <string name="equalizer_bit_perfect_dsp_warning_confirm">Aktifkan dengan DSP</string>
+    <string name="equalizer_bit_perfect_dsp_warning_cancel">Tetap Murni</string>
 </resources>
