@@ -5,18 +5,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.GraphicEq
+import androidx.compose.material.icons.rounded.PowerSettingsNew
 import androidx.compose.material.icons.rounded.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -38,13 +43,15 @@ import androidx.compose.ui.unit.sp
 import com.theveloper.pixelplay.data.equalizer.EqualizerPreset
 import com.theveloper.pixelplay.data.model.Song
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun AutoEqBottomSheet(
     currentSong: Song?,
+    isEqualizerEnabled: Boolean,
     isAutoEqEnabled: Boolean,
     currentPresetName: String,
     availablePresets: List<EqualizerPreset> = EqualizerPreset.ALL_PRESETS,
+    onToggleMasterEq: (Boolean) -> Unit,
     onToggleAutoEq: (Boolean) -> Unit,
     onSelectPreset: (EqualizerPreset) -> Unit,
     onOpenFullEqualizer: () -> Unit,
@@ -74,13 +81,17 @@ fun AutoEqBottomSheet(
                         modifier = Modifier
                             .size(40.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .background(MaterialTheme.colorScheme.primaryContainer),
+                            .background(
+                                if (isAutoEqEnabled && isEqualizerEnabled) MaterialTheme.colorScheme.primaryContainer
+                                else MaterialTheme.colorScheme.surfaceContainerHighest
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.GraphicEq,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            tint = if (isAutoEqEnabled && isEqualizerEnabled) MaterialTheme.colorScheme.onPrimaryContainer
+                            else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     Spacer(modifier = Modifier.width(14.dp))
@@ -151,34 +162,80 @@ fun AutoEqBottomSheet(
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Presets Chips Carousel
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
+            // FlowRow presets layout with dedicated "Off" Chip in first position
+            val scrollState = rememberScrollState()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 240.dp)
+                    .verticalScroll(scrollState)
             ) {
-                items(availablePresets, key = { it.name }) { preset ->
-                    val isSelected = currentPresetName.equals(preset.name, ignoreCase = true)
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // 1. Dedicated "Off" Chip
+                    val isOffSelected = !isEqualizerEnabled
                     FilterChip(
-                        selected = isSelected,
-                        onClick = { onSelectPreset(preset) },
+                        selected = isOffSelected,
+                        onClick = {
+                            if (isEqualizerEnabled) {
+                                onToggleMasterEq(false)
+                                onToggleAutoEq(false)
+                            }
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Rounded.PowerSettingsNew,
+                                contentDescription = null,
+                                modifier = Modifier.size(14.dp)
+                            )
+                        },
                         label = {
                             Text(
-                                text = preset.displayName,
+                                text = "Off",
                                 style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp),
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                fontWeight = if (isOffSelected) FontWeight.Bold else FontWeight.Normal
                             )
                         },
                         colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = MaterialTheme.colorScheme.primary,
-                            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                            selectedContainerColor = MaterialTheme.colorScheme.errorContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onErrorContainer,
+                            selectedLeadingIconColor = MaterialTheme.colorScheme.onErrorContainer,
                             containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            iconColor = MaterialTheme.colorScheme.onSurfaceVariant
                         ),
                         border = null,
                         shape = RoundedCornerShape(12.dp)
                     )
+
+                    // 2. Preset Chips
+                    availablePresets.forEach { preset ->
+                        val isSelected = isEqualizerEnabled && currentPresetName.equals(preset.name, ignoreCase = true)
+                        FilterChip(
+                            selected = isSelected,
+                            onClick = { onSelectPreset(preset) },
+                            label = {
+                                Text(
+                                    text = preset.displayName,
+                                    style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp),
+                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                )
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                labelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                            border = null,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                    }
                 }
             }
         }

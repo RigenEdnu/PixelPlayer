@@ -325,6 +325,8 @@ class EqualizerViewModel @Inject constructor(
     }
     
     fun selectPreset(preset: EqualizerPreset) {
+        // Automatically enable master equalizer if user explicitly selects an EQ preset
+        forceSetEnabled(true)
         persistBandLevelsJob?.cancel()
         equalizerManager.applyPreset(preset)
         _uiState.update { current ->
@@ -342,9 +344,18 @@ class EqualizerViewModel @Inject constructor(
         }
     }
 
-    fun setAutoEqEnabled(enabled: Boolean) {
+    fun setAutoEqEnabled(enabled: Boolean, currentSong: Song? = null) {
         viewModelScope.launch {
             equalizerPreferencesRepository.setAutoEqEnabled(enabled)
+            if (enabled) {
+                // Auto turn-on master equalizer when user switches Auto-EQ on
+                forceSetEnabled(true)
+                // Instantly apply genre preset for current song if available
+                if (currentSong != null) {
+                    val matchedPreset = com.theveloper.pixelplay.data.equalizer.AutoEqGenreMatcher.matchGenreToPreset(currentSong.genre)
+                    selectPreset(matchedPreset)
+                }
+            }
         }
     }
     
