@@ -317,6 +317,9 @@
     <string name="edit_song_action_apply_cover">Aplicar portada</string>
     <string name="edit_song_unable_to_load_image">No se pudo cargar la imagen seleccionada</string>
     <string name="edit_song_cd_search_lyrics_lrclib">Buscar letras en lrclib.net</string>
+    <string name="edit_song_action_ai_fill">Autocompletar con IA</string>
+    <string name="edit_song_ai_fill_success">Metadatos enriquecidos con IA</string>
+    <string name="edit_song_ai_fill_failed">Error al enriquecer metadatos con IA: %s</string>
 
     <!-- EditMultipleSongsSheet -->
     <string name="batch_edit_toolbar_title">Editar %d canciones</string>

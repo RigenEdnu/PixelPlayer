@@ -317,6 +317,9 @@
     <string name="edit_song_action_apply_cover">Применить обложку</string>
     <string name="edit_song_unable_to_load_image">Не удалось загрузить выбранное изображение</string>
     <string name="edit_song_cd_search_lyrics_lrclib">Поиск текста песни на lrclib.net</string>
+    <string name="edit_song_action_ai_fill">Автозаполнение с помощью ИИ</string>
+    <string name="edit_song_ai_fill_success">Метаданные дополнены с помощью ИИ</string>
+    <string name="edit_song_ai_fill_failed">Не удалось дополнить метаданные с помощью ИИ: %s</string>
 
     <!-- EditMultipleSongsSheet -->
     <string name="batch_edit_toolbar_title">Редактировать %d треков</string>

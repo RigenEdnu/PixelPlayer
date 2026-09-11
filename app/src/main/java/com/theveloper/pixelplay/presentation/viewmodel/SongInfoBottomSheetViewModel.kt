@@ -452,8 +452,7 @@ class SongInfoBottomSheetViewModel @Inject constructor(
             val cleaned = AiResponseCleaner.cleanResponse(rawResponse)
             val jsonObject = AiResponseCleaner.extractJsonObject(cleaned)
                 ?: error("Failed to extract JSON object from AI response: $rawResponse")
-            val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
-            json.decodeFromString<AiMetadataResult>(jsonObject)
+            kotlinx.serialization.json.Json { ignoreUnknownKeys = true }.decodeFromString<AiMetadataResult>(jsonObject)
         }
     }
 }

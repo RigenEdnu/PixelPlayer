@@ -317,6 +317,9 @@
     <string name="edit_song_action_apply_cover">Applica copertina</string>
     <string name="edit_song_unable_to_load_image">Impossibile caricare l\'immagine selezionata</string>
     <string name="edit_song_cd_search_lyrics_lrclib">Cerca testo su lrclib.net</string>
+    <string name="edit_song_action_ai_fill">Compila con l\'IA</string>
+    <string name="edit_song_ai_fill_success">Metadati arricchiti con l\'IA</string>
+    <string name="edit_song_ai_fill_failed">Impossibile arricchire i metadati con l\'IA: %s</string>
 
     <!-- EditMultipleSongsSheet -->
     <string name="batch_edit_toolbar_title">Modifica %d brani</string>

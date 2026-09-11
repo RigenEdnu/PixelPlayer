@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import com.theveloper.pixelplay.R
 import java.net.URLEncoder
 import timber.log.Timber
+import com.theveloper.pixelplay.data.ai.AiMetadataResult
 import com.theveloper.pixelplay.data.model.Song
 import com.theveloper.pixelplay.ui.theme.GoogleSansRounded
 import kotlinx.coroutines.launch
@@ -101,7 +102,7 @@ fun EditSongSheet(
     visible: Boolean,
     song: Song,
     onDismiss: () -> Unit,
-    onGenerateAiMetadata: (suspend (title: String, artist: String, album: String, genre: String) -> Result<com.theveloper.pixelplay.data.ai.AiMetadataResult>)? = null,
+    onGenerateAiMetadata: (suspend (title: String, artist: String, album: String, genre: String) -> Result<AiMetadataResult>)? = null,
     onSave: (
         title: String,
         artist: String,
@@ -149,7 +150,7 @@ fun EditSongSheet(
 private fun EditSongContent(
     song: Song,
     onDismiss: () -> Unit,
-    onGenerateAiMetadata: (suspend (title: String, artist: String, album: String, genre: String) -> Result<com.theveloper.pixelplay.data.ai.AiMetadataResult>)? = null,
+    onGenerateAiMetadata: (suspend (title: String, artist: String, album: String, genre: String) -> Result<AiMetadataResult>)? = null,
     onSave: (
         title: String,
         artist: String,
