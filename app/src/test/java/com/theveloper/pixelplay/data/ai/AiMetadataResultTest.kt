@@ -15,7 +15,7 @@ class AiMetadataResultTest {
             {"title":"Bohemian Rhapsody","artist":"Queen","album":"A Night at the Opera","genre":"Progressive Rock"}
         """.trimIndent()
 
-        val cleaned = AiResponseCleaner.cleanResponse(rawJson)
+        val cleaned = AiResponseCleaner.cleanJsonResponse(rawJson)
         val jsonObject = AiResponseCleaner.extractJsonObject(cleaned)
         assertNotNull(jsonObject)
 
@@ -40,7 +40,7 @@ class AiMetadataResultTest {
             ```
         """.trimIndent()
 
-        val cleaned = AiResponseCleaner.cleanResponse(rawResponse)
+        val cleaned = AiResponseCleaner.cleanJsonResponse(rawResponse)
         val jsonObject = AiResponseCleaner.extractJsonObject(cleaned)
         assertNotNull(jsonObject)
 
@@ -57,7 +57,7 @@ class AiMetadataResultTest {
             {"genre":"Synthwave"}
         """.trimIndent()
 
-        val cleaned = AiResponseCleaner.cleanResponse(rawJson)
+        val cleaned = AiResponseCleaner.cleanJsonResponse(rawJson)
         val jsonObject = AiResponseCleaner.extractJsonObject(cleaned)
         assertNotNull(jsonObject)
 

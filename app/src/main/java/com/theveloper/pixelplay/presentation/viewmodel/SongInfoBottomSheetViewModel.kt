@@ -449,7 +449,7 @@ class SongInfoBottomSheetViewModel @Inject constructor(
                 prompt = prompt,
                 type = AiSystemPromptType.METADATA
             )
-            val cleaned = AiResponseCleaner.cleanResponse(rawResponse)
+            val cleaned = AiResponseCleaner.cleanJsonResponse(rawResponse)
             val jsonObject = AiResponseCleaner.extractJsonObject(cleaned)
                 ?: error("Failed to extract JSON object from AI response: $rawResponse")
             kotlinx.serialization.json.Json { ignoreUnknownKeys = true }.decodeFromString<AiMetadataResult>(jsonObject)
