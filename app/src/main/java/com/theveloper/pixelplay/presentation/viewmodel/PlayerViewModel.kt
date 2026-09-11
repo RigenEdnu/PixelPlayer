@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.net.Uri
 import android.os.Trace
-import android.util.Log
 import kotlinx.coroutines.withContext
 import androidx.compose.animation.core.Animatable
 import androidx.core.content.ContextCompat
@@ -178,7 +177,6 @@ private data class SortOptionsSnapshot(
 )
 
 @UnstableApi
-@SuppressLint("LogNotTimber")
 @OptIn(coil.annotation.ExperimentalCoilApi::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
@@ -1482,7 +1480,7 @@ class PlayerViewModel @Inject constructor(
     }
 
     init {
-        Log.i("PlayerViewModel", "init started.")
+        Timber.tag("PlayerViewModel").i("init started.")
 
         // Cast initialization if already connected
         val currentSession = sessionManager?.currentCastSession
@@ -1652,7 +1650,7 @@ class PlayerViewModel @Inject constructor(
                 _playerUiState.update { it.copy(isSyncingLibrary = isSyncing) }
 
                 if (oldSyncingLibraryState && !isSyncing) {
-                    Log.i("PlayerViewModel", "Sync completed. Calling resetAndLoadInitialData from isSyncingStateFlow observer.")
+                    Timber.tag("PlayerViewModel").i("Sync completed. Calling resetAndLoadInitialData from isSyncingStateFlow observer.")
                     resetAndLoadInitialData("isSyncingStateFlow observer")
                 }
             }
@@ -1660,7 +1658,7 @@ class PlayerViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (!isSyncingStateFlow.value && !_isInitialDataLoaded.value && libraryStateHolder.allSongs.value.isEmpty()) {
-                Log.i("PlayerViewModel", "Initial check: Sync not active and initial data not loaded. Calling resetAndLoadInitialData.")
+                Timber.tag("PlayerViewModel").i("Initial check: Sync not active and initial data not loaded. Calling resetAndLoadInitialData.")
                 resetAndLoadInitialData("Initial Check")
             }
         }
@@ -1680,7 +1678,7 @@ class PlayerViewModel @Inject constructor(
                 playbackDispatchStateHolder.flushPendingPlaybackAction()
             } catch (e: Exception) {
                 _playerUiState.update { it.copy(isLoadingInitialSongs = false, isLoadingLibraryCategories = false) }
-                Log.e("PlayerViewModel", "Error setting up MediaController", e)
+                Timber.tag("PlayerViewModel").e(e, "Error setting up MediaController")
             }
         }, ContextCompat.getMainExecutor(context))
 
@@ -1941,7 +1939,7 @@ class PlayerViewModel @Inject constructor(
     private fun resetAndLoadInitialData(caller: String = "Unknown") {
         Trace.beginSection("PlayerViewModel.resetAndLoadInitialData")
         try {
-            Log.d("PlayerViewModel", "resetAndLoadInitialData called by $caller")
+            Timber.tag("PlayerViewModel").d("resetAndLoadInitialData called by $caller")
             loadInitialLibraryDataParallel()
             updateDailyMix()
         } finally {
@@ -2086,21 +2084,20 @@ class PlayerViewModel @Inject constructor(
 
     fun triggerAlbumNavigationFromPlayer(albumId: Long) {
         if (albumId == -1L) {
-            Log.d("AlbumDebug", "triggerAlbumNavigationFromPlayer ignored invalid albumId=$albumId")
+            Timber.tag("AlbumDebug").d("triggerAlbumNavigationFromPlayer ignored invalid albumId=$albumId")
             return
         }
 
         val existingJob = albumNavigationJob
         if (existingJob != null && existingJob.isActive) {
-            Log.d("AlbumDebug", "triggerAlbumNavigationFromPlayer ignored; navigation already in progress for albumId=$albumId")
+            Timber.tag("AlbumDebug").d("triggerAlbumNavigationFromPlayer ignored; navigation already in progress for albumId=$albumId")
             return
         }
 
         albumNavigationJob?.cancel()
         albumNavigationJob = viewModelScope.launch {
             val currentSong = playbackStateHolder.stablePlayerState.value.currentSong
-            Log.d(
-                "AlbumDebug",
+            Timber.tag("AlbumDebug").d(
                 "triggerAlbumNavigationFromPlayer: albumId=$albumId, songId=${currentSong?.id}, title=${currentSong?.title}"
             )
             collapsePlayerSheet()
@@ -2116,13 +2113,13 @@ class PlayerViewModel @Inject constructor(
 
     fun triggerArtistNavigationFromPlayer(artistId: Long) {
         if (artistId == 0L) {
-            Log.d("ArtistDebug", "triggerArtistNavigationFromPlayer ignored invalid artistId=$artistId")
+            Timber.tag("ArtistDebug").d("triggerArtistNavigationFromPlayer ignored invalid artistId=$artistId")
             return
         }
 
         val existingJob = artistNavigationJob
         if (existingJob != null && existingJob.isActive) {
-            Log.d("ArtistDebug", "triggerArtistNavigationFromPlayer ignored; navigation already in progress for artistId=$artistId")
+            Timber.tag("ArtistDebug").d("triggerArtistNavigationFromPlayer ignored; navigation already in progress for artistId=$artistId")
             return
         }
 
@@ -2139,12 +2136,11 @@ class PlayerViewModel @Inject constructor(
             }
 
             if (resolvedId == 0L || resolvedId == -1L) {
-                Log.d("ArtistDebug", "triggerArtistNavigationFromPlayer: could not resolve artistId for name=${currentSong?.artist}")
+                Timber.tag("ArtistDebug").d("triggerArtistNavigationFromPlayer: could not resolve artistId for name=${currentSong?.artist}")
                 return@launch
             }
 
-            Log.d(
-                "ArtistDebug",
+            Timber.tag("ArtistDebug").d(
                 "triggerArtistNavigationFromPlayer: artistId=$resolvedId, songId=${currentSong?.id}, title=${currentSong?.title}"
             )
             collapsePlayerSheet()
@@ -2406,7 +2402,7 @@ class PlayerViewModel @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            Log.e("MediaController", "Error removing from queue: ${e.message}")
+            Timber.tag("MediaController").e("Error removing from queue: ${e.message}")
         }
     }
 
@@ -2985,20 +2981,19 @@ class PlayerViewModel @Inject constructor(
                 val songs = withContext(Dispatchers.IO) {
                     musicRepository.getAllSongsOnce()
                 }
-                Log.i(
-                    "PixelPlayBenchmark",
+                Timber.tag("PixelPlayBenchmark").i(
                     "prepare player attempt=$attempt controllerReady=$controllerReady songs=${songs.size}"
                 )
                 if (controllerReady && songs.isNotEmpty()) {
                     playSongs(songs, songs.first(), "Benchmark Player")
                     delay(700L)
                     collapsePlayerSheet()
-                    Log.i("PixelPlayBenchmark", "Benchmark player prepared with ${songs.first().title}")
+                    Timber.tag("PixelPlayBenchmark").i("Benchmark player prepared with ${songs.first().title}")
                     return@launch
                 }
                 delay(500L)
             }
-            Log.w("PixelPlayBenchmark", "Unable to prepare benchmark player from library")
+            Timber.tag("PixelPlayBenchmark").w("Unable to prepare benchmark player from library")
         }
     }
 

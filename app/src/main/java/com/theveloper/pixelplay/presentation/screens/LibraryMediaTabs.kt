@@ -102,8 +102,6 @@ fun LibraryAlbumsTab(
 
     val gridState = rememberLazyGridState()
     val listState = rememberLazyListState()
-    val dummyListState = rememberLazyListState()
-    val dummyGridState = rememberLazyGridState()
     val context = LocalContext.current
     val imageLoader = context.imageLoader
 
@@ -324,7 +322,7 @@ fun LibraryAlbumsTab(
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         if (isListView) {
-                            val activeListState = if (albums.itemCount > 0) listState else dummyListState
+                            val activeListState = listState
                             LazyColumn(
                                 modifier = Modifier
                                     .padding(start = 14.dp, end = if (LocalShowScrollbar.current && (activeListState.canScrollForward || activeListState.canScrollBackward)) 24.dp else 14.dp, bottom = 6.dp)
@@ -392,7 +390,7 @@ fun LibraryAlbumsTab(
                                 dragLabelProvider = albumFastScrollLabelProvider
                             )
                         } else {
-                            val activeGridState = if (albums.itemCount > 0) gridState else dummyGridState
+                            val activeGridState = gridState
                             LazyVerticalGrid(
                                 modifier = Modifier
                                     .padding(start = 14.dp, end = if (LocalShowScrollbar.current && (activeGridState.canScrollForward || activeGridState.canScrollBackward)) 24.dp else 14.dp, bottom = 6.dp)
@@ -490,7 +488,6 @@ fun LibraryArtistsTab(
     }.collectAsStateWithLifecycle(initialValue = false)
 
     val listState = rememberLazyListState()
-    val dummyListState = rememberLazyListState()
     val artistFastScrollLabelProvider = remember(artists, currentArtistSortOption) {
         { index: Int ->
             artistFastScrollLabel(
@@ -607,7 +604,7 @@ fun LibraryArtistsTab(
                     }
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        val activeListState = if (artists.itemCount > 0) listState else dummyListState
+                        val activeListState = listState
                         LazyColumn(
                             modifier = Modifier
                                 .padding(start = 12.dp, end = if (LocalShowScrollbar.current && (activeListState.canScrollForward || activeListState.canScrollBackward)) 22.dp else 12.dp, bottom = 6.dp)
