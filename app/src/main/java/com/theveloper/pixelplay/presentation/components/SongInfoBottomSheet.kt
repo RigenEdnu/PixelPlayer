@@ -749,6 +749,9 @@ fun SongInfoBottomSheet(
         visible = showEditSheet,
         song = song,
         onDismiss = { showEditSheet = false },
+        onGenerateAiMetadata = { title, artist, album, genre ->
+            songInfoViewModel.generateAiMetadata(title, artist, album, genre)
+        },
         onSave = { title, artist, album, albumArtist, composer, genre, lyrics, trackNumber, discNumber, replayGainTrackGainDb, replayGainAlbumGainDb, coverArt ->
             onEditSong(
                 title,

@@ -13,6 +13,10 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.theveloper.pixelplay.R
+import com.theveloper.pixelplay.data.ai.AiHandler
+import com.theveloper.pixelplay.data.ai.AiMetadataResult
+import com.theveloper.pixelplay.data.ai.AiResponseCleaner
+import com.theveloper.pixelplay.data.ai.AiSystemPromptType
 import com.theveloper.pixelplay.data.database.MusicDao
 import com.theveloper.pixelplay.data.database.toArtist
 import com.theveloper.pixelplay.data.model.Artist
@@ -47,6 +51,7 @@ class SongInfoBottomSheetViewModel @Inject constructor(
     private val wearPhoneTransferSender: WearPhoneTransferSender,
     private val transferStateStore: PhoneWatchTransferStateStore,
     private val musicDao: MusicDao,
+    private val aiHandler: AiHandler,
     @ApplicationContext private val appContext: Context,
 ) : ViewModel() {
 
@@ -426,4 +431,29 @@ class SongInfoBottomSheetViewModel @Inject constructor(
             ToneTarget.Notification -> R.string.song_info_tone_notification_label
             ToneTarget.Alarm -> R.string.song_info_tone_alarm_label
         }
+
+    suspend fun generateAiMetadata(
+        title: String,
+        artist: String,
+        album: String,
+        genre: String
+    ): Result<AiMetadataResult> = withContext(Dispatchers.IO) {
+        runCatching {
+            val prompt = buildString {
+                append("title=\"").append(title.replace("\"", "\\\"")).append("\", ")
+                append("artist=\"").append(artist.replace("\"", "\\\"")).append("\", ")
+                append("album=\"").append(album.replace("\"", "\\\"")).append("\", ")
+                append("genre=\"").append(genre.replace("\"", "\\\"")).append("\"")
+            }
+            val rawResponse = aiHandler.generateContent(
+                prompt = prompt,
+                type = AiSystemPromptType.METADATA
+            )
+            val cleaned = AiResponseCleaner.cleanResponse(rawResponse)
+            val jsonObject = AiResponseCleaner.extractJsonObject(cleaned)
+                ?: error("Failed to extract JSON object from AI response: $rawResponse")
+            val json = kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+            json.decodeFromString<AiMetadataResult>(jsonObject)
+        }
+    }
 }

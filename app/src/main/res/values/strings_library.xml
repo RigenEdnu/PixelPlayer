@@ -317,6 +317,9 @@
     <string name="edit_song_action_apply_cover">Apply cover art</string>
     <string name="edit_song_unable_to_load_image">Unable to load the selected image</string>
     <string name="edit_song_cd_search_lyrics_lrclib">Search lyrics on lrclib.net</string>
+    <string name="edit_song_action_ai_fill">Auto-fill with AI</string>
+    <string name="edit_song_ai_fill_success">Metadata enriched with AI</string>
+    <string name="edit_song_ai_fill_failed">Failed to enrich metadata with AI: %s</string>
 
     <!-- EditMultipleSongsSheet -->
     <string name="batch_edit_toolbar_title">Edit %d Songs</string>

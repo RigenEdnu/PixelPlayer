@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.rounded.Album
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.Category
 import androidx.compose.material.icons.rounded.FormatListNumbered
 import androidx.compose.material.icons.rounded.Info
@@ -100,6 +101,7 @@ fun EditSongSheet(
     visible: Boolean,
     song: Song,
     onDismiss: () -> Unit,
+    onGenerateAiMetadata: (suspend (title: String, artist: String, album: String, genre: String) -> Result<com.theveloper.pixelplay.data.ai.AiMetadataResult>)? = null,
     onSave: (
         title: String,
         artist: String,
@@ -134,6 +136,7 @@ fun EditSongSheet(
                 EditSongContent(
                     song = song,
                     onDismiss = onDismiss,
+                    onGenerateAiMetadata = onGenerateAiMetadata,
                     onSave = onSave
                 )
             }
@@ -146,6 +149,7 @@ fun EditSongSheet(
 private fun EditSongContent(
     song: Song,
     onDismiss: () -> Unit,
+    onGenerateAiMetadata: (suspend (title: String, artist: String, album: String, genre: String) -> Result<com.theveloper.pixelplay.data.ai.AiMetadataResult>)? = null,
     onSave: (
         title: String,
         artist: String,
@@ -179,6 +183,8 @@ private fun EditSongContent(
     var pendingCoverArtUri by remember { mutableStateOf<Uri?>(null) }
 
     var showInfoDialog by remember { mutableStateOf(false) }
+    var isAiLoading by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val pickCoverArtLauncher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -304,6 +310,60 @@ private fun EditSongContent(
                     )
                 },
                 actions = {
+                    if (onGenerateAiMetadata != null) {
+                        FilledTonalIconButton(
+                            modifier = Modifier.padding(end = 4.dp),
+                            enabled = !isAiLoading,
+                            onClick = {
+                                isAiLoading = true
+                                coroutineScope.launch {
+                                    val result = onGenerateAiMetadata(title, artist, album, genre)
+                                    isAiLoading = false
+                                    result.onSuccess { metadata ->
+                                        if (title.isBlank() && !metadata.title.isNullOrBlank()) {
+                                            title = metadata.title
+                                        }
+                                        if (artist.isBlank() && !metadata.artist.isNullOrBlank()) {
+                                            artist = metadata.artist
+                                        }
+                                        if (album.isBlank() && !metadata.album.isNullOrBlank()) {
+                                            album = metadata.album
+                                        }
+                                        if (genre.isBlank() && !metadata.genre.isNullOrBlank()) {
+                                            genre = metadata.genre
+                                        }
+                                        android.widget.Toast.makeText(
+                                            context,
+                                            context.getString(R.string.edit_song_ai_fill_success),
+                                            android.widget.Toast.LENGTH_SHORT
+                                        ).show()
+                                    }.onFailure { error ->
+                                        val errText = error.localizedMessage ?: error.message ?: "Unknown error"
+                                        android.widget.Toast.makeText(
+                                            context,
+                                            context.getString(R.string.edit_song_ai_fill_failed, errText),
+                                            android.widget.Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                            },
+                            shape = CircleShape
+                        ) {
+                            if (isAiLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(18.dp),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Rounded.AutoAwesome,
+                                    contentDescription = stringResource(R.string.edit_song_action_ai_fill),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
                     FilledTonalIconButton(
                         modifier = Modifier.padding(end = 10.dp),
                         onClick = { showInfoDialog = true },
